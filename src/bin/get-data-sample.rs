@@ -124,6 +124,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "eqsop_bydd_trd",
             "http://data-dbg.krx.co.kr/svc/apis/drv/eqsop_bydd_trd",
         ),
+        (
+            "eqkop_bydd_trd",
+            "http://data-dbg.krx.co.kr/svc/apis/drv/eqkop_bydd_trd",
+        ),
+        (
+            "oil_bydd_trd",
+            "http://data-dbg.krx.co.kr/svc/apis/gen/oil_bydd_trd",
+        ),
+        (
+            "gold_bydd_trd",
+            "http://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd",
+        ),
+        (
+            "ets_bydd_trd",
+            "http://data-dbg.krx.co.kr/svc/apis/gen/ets_bydd_trd",
+        ),
+        (
+            "sri_bond_info",
+            "http://data-dbg.krx.co.kr/svc/apis/esg/sri_bond_info",
+        ),
     ];
 
     fs::create_dir_all("samples")?;

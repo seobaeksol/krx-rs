@@ -1,0 +1,55 @@
+{
+  "OutBlock_1": [
+    {
+      "AVG_CONVEXITY_PRC": "80.407",
+      "AVG_DURATION": "5.251",
+      "BAS_DD": "20240104",
+      "BND_IDX_AVG_YD": "3.528",
+      "BND_IDX_GRP_NM": "KRX 채권지수",
+      "CALL_REINVST_IDX": "187.45",
+      "CALL_REINVST_IDX_CMPPREVDD": "0.46",
+      "MKT_PRC_IDX": "101.21",
+      "MKT_PRC_IDX_CMPPREVDD": "0.24",
+      "NETPRC_IDX": "100.53",
+      "NETPRC_IDX_CMPPREVDD": "0.24",
+      "TOT_EARNG_IDX": "188.62",
+      "TOT_EARNG_IDX_CMPPREVDD": "0.46",
+      "ZERO_REINVST_IDX": "182.29",
+      "ZERO_REINVST_IDX_CMPPREVDD": "0.44"
+    },
+    {
+      "AVG_CONVEXITY_PRC": "10.684",
+      "AVG_DURATION": "2.804",
+      "BAS_DD": "20240104",
+      "BND_IDX_AVG_YD": "3.280",
+      "BND_IDX_GRP_NM": "KTB 지수",
+      "CALL_REINVST_IDX": "-",
+      "CALL_REINVST_IDX_CMPPREVDD": "-",
+      "MKT_PRC_IDX": "10324.86",
+      "MKT_PRC_IDX_CMPPREVDD": "14.26",
+      "NETPRC_IDX": "10434.27",
+      "NETPRC_IDX_CMPPREVDD": "13.46",
+      "TOT_EARNG_IDX": "15084.00",
+      "TOT_EARNG_IDX_CMPPREVDD": "20.83",
+      "ZERO_REINVST_IDX": "-",
+      "ZERO_REINVST_IDX_CMPPREVDD": "-"
+    },
+    {
+      "AVG_CONVEXITY_PRC": "23.729",
+      "AVG_DURATION": "4.009",
+      "BAS_DD": "20240104",
+      "BND_IDX_AVG_YD": "3.273",
+      "BND_IDX_GRP_NM": "국고채프라임지수",
+      "CALL_REINVST_IDX": "-",
+      "CALL_REINVST_IDX_CMPPREVDD": "-",
+      "MKT_PRC_IDX": "-",
+      "MKT_PRC_IDX_CMPPREVDD": "-",
+      "NETPRC_IDX": "106.21",
+      "NETPRC_IDX_CMPPREVDD": "0.19",
+      "TOT_EARNG_IDX": "187.56",
+      "TOT_EARNG_IDX_CMPPREVDD": "0.36",
+      "ZERO_REINVST_IDX": "-",
+      "ZERO_REINVST_IDX_CMPPREVDD": "-"
+    }
+  ]
+}

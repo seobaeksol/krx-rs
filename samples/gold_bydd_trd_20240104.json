@@ -1,0 +1,30 @@
+{
+  "OutBlock_1": [
+    {
+      "ACC_TRDVAL": "3642099160",
+      "ACC_TRDVOL": "42212",
+      "BAS_DD": "20240104",
+      "CMPPREVDD_PRC": "-520",
+      "FLUC_RT": "-0.60",
+      "ISU_CD": "04020000",
+      "ISU_NM": "금 99.99_1Kg",
+      "TDD_CLSPRC": "86300",
+      "TDD_HGPRC": "86420",
+      "TDD_LWPRC": "86170",
+      "TDD_OPNPRC": "86400"
+    },
+    {
+      "ACC_TRDVAL": "526112430",
+      "ACC_TRDVOL": "6116",
+      "BAS_DD": "20240104",
+      "CMPPREVDD_PRC": "-600",
+      "FLUC_RT": "-0.69",
+      "ISU_CD": "04020100",
+      "ISU_NM": "미니금 99.99_100g",
+      "TDD_CLSPRC": "86030",
+      "TDD_HGPRC": "86160",
+      "TDD_LWPRC": "85650",
+      "TDD_OPNPRC": "85650"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "OutBlock_1": [
+    {
+      "ACC_TRDVAL": "2339910682",
+      "ACC_TRDVOL": "1543502",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "1",
+      "DELIST_DD": "20240112",
+      "FLUC_RT": "0.00",
+      "ISU_CD": "1035901D",
+      "ISU_NM": "일진전기 2R",
+      "ISU_PRC": "9380",
+      "LIST_SHRS": "8474850",
+      "MKTCAP": "12246158250",
+      "MKT_NM": "KOSPI",
+      "TARSTK_ISU_NM": "일진전기",
+      "TARSTK_ISU_PRSNT_PRC": "10900",
+      "TARSTK_ISU_SRT_CD": "103590",
+      "TDD_CLSPRC": "1445",
+      "TDD_HGPRC": "1800",
+      "TDD_LWPRC": "1201",
+      "TDD_OPNPRC": "1800"
+    }
+  ]
+}
