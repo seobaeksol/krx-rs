@@ -3,6 +3,15 @@
 ### 2.1 Description
 KOSPI 시리즈 지수의 시세정보 제공
 
+### How to Request
+
+```bash
+curl --location 'http://data-dbg.krx.co.kr/svc/apis/idx/kospi_dd_trd' \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'AUTH_KEY: YOUR_AUTH_KEY' \
+  --data '{"basDd": "20240105"}'
+```
+
 **Server endpoint URL**: `http://data-dbg.krx.co.kr/svc/apis/idx/kospi_dd_trd`
 
 ### 2.2 Request
@@ -32,10 +41,12 @@ KOSPI 시리즈 지수의 시세정보 제공
 
 ### 2.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
-### 2.5 
+### 2.5 Response Sample
+
+```json
 {
   "OutBlock_1": [
     {
@@ -82,4 +93,5 @@ KOSPI 시리즈 지수의 시세정보 제공
     }
   ]
 }
+```
 

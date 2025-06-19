@@ -39,7 +39,7 @@ ETN(상장지수증권)의 매매정보 제공
 
 ### 15.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
 ### 15.5 Response Sample

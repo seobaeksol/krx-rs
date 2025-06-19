@@ -3,6 +3,15 @@
 ### 3.1 Description
 KOSDAQ 시리즈 지수의 시세정보 제공
 
+### How to Request
+
+```bash
+curl --location 'http://data-dbg.krx.co.kr/svc/apis/idx/kosdaq_dd_trd' \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'AUTH_KEY: YOUR_AUTH_KEY' \
+  --data '{"basDd": "20240105"}'
+```
+
 **Server endpoint URL**: `http://data-dbg.krx.co.kr/svc/apis/idx/kosdaq_dd_trd`
 
 ### 3.2 Request
@@ -32,10 +41,12 @@ KOSDAQ 시리즈 지수의 시세정보 제공
 
 ### 3.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
-### 3.5 
+### 3.5 Response Sample
+
+```json
 {
   "OutBlock_1": [
     {
@@ -82,4 +93,5 @@ KOSDAQ 시리즈 지수의 시세정보 제공
     }
   ]
 }
+```
 

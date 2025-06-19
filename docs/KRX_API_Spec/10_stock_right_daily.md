@@ -39,7 +39,7 @@
 
 ### 10.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
 ### 10.5 Response Sample

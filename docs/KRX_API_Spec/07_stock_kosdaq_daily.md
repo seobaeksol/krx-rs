@@ -3,6 +3,15 @@
 ### 7.1 Description
 코스닥시장에 상장되어 있는 주권의 매매정보 제공
 
+### How to Request
+
+```bash
+curl --location 'http://data-dbg.krx.co.kr/svc/apis/sto/ksq_bydd_trd' \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'AUTH_KEY: YOUR_AUTH_KEY' \
+  --data '{"basDd": "20240105"}'
+```
+
 **Server endpoint URL**: `http://data-dbg.krx.co.kr/svc/apis/sto/ksq_bydd_trd`
 
 ### 7.2 Request
@@ -35,10 +44,12 @@
 
 ### 7.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
-### 7.5 
+### 7.5 Response Sample
+
+```json
 {
   "OutBlock_1": [
     {
@@ -94,4 +105,5 @@
     }
   ]
 }
+```
 

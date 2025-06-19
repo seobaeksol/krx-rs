@@ -3,6 +3,15 @@
 ### 8.1 Description
 코넥스시장에 상장되어 있는 주권의 매매정보 제공
 
+### How to Request
+
+```bash
+curl --location 'http://data-dbg.krx.co.kr/svc/apis/sto/knx_bydd_trd' \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'AUTH_KEY: YOUR_AUTH_KEY' \
+  --data '{"basDd": "20240105"}'
+```
+
 **Server endpoint URL**: `http://data-dbg.krx.co.kr/svc/apis/sto/knx_bydd_trd`
 
 ### 8.2 Request
@@ -35,10 +44,12 @@
 
 ### 8.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
-### 8.5 
+### 8.5 Response Sample
+
+```json
 {
   "OutBlock_1": [
     {
@@ -94,4 +105,5 @@
     }
   ]
 }
+```
 

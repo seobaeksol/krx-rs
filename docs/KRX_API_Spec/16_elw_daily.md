@@ -36,7 +36,7 @@ ELW(주식위런트증권)의 매매정보 제공
 
 ### 16.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
 ### 16.5 Response Sample

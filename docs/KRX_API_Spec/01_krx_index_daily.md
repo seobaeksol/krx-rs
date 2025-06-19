@@ -5,6 +5,15 @@
 ### 1.1 Description
 KRX 시리즈 지수의 시세정보 제공
 
+### How to Request
+
+```bash
+curl --location 'http://data-dbg.krx.co.kr/svc/apis/idx/krx_dd_trd' \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'AUTH_KEY: YOUR_AUTH_KEY' \
+  --data '{"basDd": "20240105"}'
+```
+
 **Server endpoint URL**: `http://data-dbg.krx.co.kr/svc/apis/idx/krx_dd_trd`
 
 ### 1.2 Request
@@ -34,10 +43,12 @@ KRX 시리즈 지수의 시세정보 제공
 
 ### 1.4 Request Sample
 ```json
-{P240105"}
+{"basDd": "20240105"}
 ```
 
-### 1.5 
+### 1.5 Response Sample
+
+```json
 {
   "OutBlock_1": [
     {
@@ -84,4 +95,5 @@ KRX 시리즈 지수의 시세정보 제공
     }
   ]
 }
+```
 
