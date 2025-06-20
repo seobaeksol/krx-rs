@@ -1,8 +1,8 @@
 use crate::{
-    client::Client, 
-    data::etp::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::{ApiResponse, etp::*},
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -60,11 +60,9 @@ impl<'a> EtfDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::etp::EtfDailyRecord>>(
-                "/etp/etf_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<EtfDailyRecord>>("/etp/etf_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_etf_daily(response)
@@ -99,8 +97,9 @@ impl<'a> EtnDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::etp::EtnDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::etp::EtnDailyRecord>>(
                 "/etp/etn_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -138,8 +137,9 @@ impl<'a> ElwDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::etp::ElwDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::etp::ElwDailyRecord>>(
                 "/etp/elw_bydd_trd",
                 &[("basDd", &base_date)],
             )

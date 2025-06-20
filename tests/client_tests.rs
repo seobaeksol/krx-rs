@@ -1,6 +1,9 @@
 use krx_rs::{Client, error::Error};
-use wiremock::{Mock, MockServer, ResponseTemplate, matchers::{method, path, query_param, header}};
 use serde_json::json;
+use wiremock::{
+    Mock, MockServer, ResponseTemplate,
+    matchers::{header, method, path, query_param},
+};
 
 async fn setup_mock_server() -> MockServer {
     MockServer::start().await
@@ -9,7 +12,7 @@ async fn setup_mock_server() -> MockServer {
 #[tokio::test]
 async fn test_client_creation() {
     let client = Client::new("test_auth_key");
-    
+
     // 클라이언트가 성공적으로 생성되어야 함
     let _stock_api = client.stock();
     let _index_api = client.index();
@@ -24,7 +27,7 @@ async fn test_client_builder() {
         .user_agent("test-agent")
         .build()
         .unwrap();
-    
+
     let _stock_api = client.stock();
 }
 
@@ -33,7 +36,7 @@ async fn test_client_builder_missing_auth_key() {
     let result = Client::builder()
         .base_url("http://test.example.com")
         .build();
-    
+
     assert!(result.is_err());
     if let Err(Error::InvalidInput(msg)) = result {
         assert_eq!(msg, "auth_key is required");
@@ -45,7 +48,7 @@ async fn test_client_builder_missing_auth_key() {
 #[tokio::test]
 async fn test_successful_api_call() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -64,7 +67,7 @@ async fn test_successful_api_call() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/idx/krx_dd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -72,19 +75,15 @@ async fn test_successful_api_call() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.index()
-        .krx_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.index().krx_daily().date("20240105").fetch().await;
+
     if let Err(e) = &result {
         eprintln!("Error: {:?}", e);
     }
@@ -94,27 +93,27 @@ async fn test_successful_api_call() {
 #[tokio::test]
 async fn test_api_error_404() {
     let mock_server = setup_mock_server().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/idx/krx_dd_trd"))
         .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.index()
-        .krx_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.index().krx_daily().date("20240105").fetch().await;
+
     assert!(result.is_err());
-    if let Err(Error::ApiError { status_code, message }) = result {
+    if let Err(Error::ApiError {
+        status_code,
+        message,
+    }) = result
+    {
         assert_eq!(status_code, 404);
         assert_eq!(message, "Not Found");
     } else {
@@ -125,29 +124,25 @@ async fn test_api_error_404() {
 #[tokio::test]
 async fn test_rate_limit_error() {
     let mock_server = setup_mock_server().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/idx/krx_dd_trd"))
         .respond_with(
             ResponseTemplate::new(429)
                 .insert_header("retry-after", "60")
-                .set_body_string("Rate limit exceeded")
+                .set_body_string("Rate limit exceeded"),
         )
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.index()
-        .krx_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.index().krx_daily().date("20240105").fetch().await;
+
     assert!(result.is_err());
     if let Err(Error::RateLimit { retry_after }) = result {
         assert_eq!(retry_after, 60);
@@ -159,27 +154,28 @@ async fn test_rate_limit_error() {
 #[tokio::test]
 async fn test_json_parsing_error() {
     let mock_server = setup_mock_server().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/idx/krx_dd_trd"))
         .respond_with(ResponseTemplate::new(200).set_body_string("Invalid JSON"))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.index()
-        .krx_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.index().krx_daily().date("20240105").fetch().await;
+
     assert!(result.is_err());
-    if let Err(Error::Parsing { details, source: _, response_body }) = result {
+    if let Err(Error::Parsing {
+        details,
+        source: _,
+        response_body,
+    }) = result
+    {
         assert!(details.contains("Failed to deserialize response"));
         assert_eq!(response_body, "Invalid JSON");
     } else {
@@ -190,7 +186,7 @@ async fn test_json_parsing_error() {
 #[tokio::test]
 async fn test_stock_kospi_daily_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -212,7 +208,7 @@ async fn test_stock_kospi_daily_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/sto/stk_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -220,19 +216,15 @@ async fn test_stock_kospi_daily_api() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.stock()
-        .kospi_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.stock().kospi_daily().date("20240105").fetch().await;
+
     if let Err(e) = &result {
         eprintln!("Stock API Error: {:?}", e);
     }
@@ -242,7 +234,7 @@ async fn test_stock_kospi_daily_api() {
 #[tokio::test]
 async fn test_bond_kts_daily_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -266,7 +258,7 @@ async fn test_bond_kts_daily_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/bon/kts_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -274,19 +266,15 @@ async fn test_bond_kts_daily_api() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.bond()
-        .kts_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.bond().kts_daily().date("20240105").fetch().await;
+
     if let Err(e) = &result {
         eprintln!("Bond API Error: {:?}", e);
     }
@@ -296,7 +284,7 @@ async fn test_bond_kts_daily_api() {
 #[tokio::test]
 async fn test_etp_etf_daily_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -322,7 +310,7 @@ async fn test_etp_etf_daily_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/etp/etf_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -330,19 +318,15 @@ async fn test_etp_etf_daily_api() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.etp()
-        .etf_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.etp().etf_daily().date("20240105").fetch().await;
+
     if let Err(e) = &result {
         eprintln!("ETP API Error: {:?}", e);
     }
@@ -352,7 +336,7 @@ async fn test_etp_etf_daily_api() {
 #[tokio::test]
 async fn test_derivative_futures_daily_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -374,7 +358,7 @@ async fn test_derivative_futures_daily_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/drv/fut_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -382,19 +366,20 @@ async fn test_derivative_futures_daily_api() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.derivative()
+
+    let result = client
+        .derivative()
         .futures_daily()
         .date("20240105")
         .fetch()
         .await;
-    
+
     if let Err(e) = &result {
         eprintln!("Derivative API Error: {:?}", e);
     }
@@ -404,7 +389,7 @@ async fn test_derivative_futures_daily_api() {
 #[tokio::test]
 async fn test_general_oil_daily_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -417,7 +402,7 @@ async fn test_general_oil_daily_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/gen/oil_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -425,19 +410,15 @@ async fn test_general_oil_daily_api() {
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.general()
-        .oil_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.general().oil_daily().date("20240105").fetch().await;
+
     if let Err(e) = &result {
         eprintln!("General API Error: {:?}", e);
     }
@@ -447,7 +428,7 @@ async fn test_general_oil_daily_api() {
 #[tokio::test]
 async fn test_esg_sri_bond_info_api() {
     let mock_server = setup_mock_server().await;
-    
+
     let mock_response = json!({
         "OutBlock_1": [
             {
@@ -466,25 +447,22 @@ async fn test_esg_sri_bond_info_api() {
             }
         ]
     });
-    
+
     Mock::given(method("GET"))
         .and(path("/esg/sri_bond_info"))
         .and(header("AUTH_KEY", "test_key"))
         .respond_with(ResponseTemplate::new(200).set_body_json(&mock_response))
         .mount(&mock_server)
         .await;
-    
+
     let client = Client::builder()
         .auth_key("test_key")
         .base_url(&mock_server.uri())
         .build()
         .unwrap();
-    
-    let result = client.esg()
-        .sri_bond_info()
-        .fetch()
-        .await;
-    
+
+    let result = client.esg().sri_bond_info().fetch().await;
+
     if let Err(e) = &result {
         eprintln!("ESG API Error: {:?}", e);
     }
@@ -500,13 +478,9 @@ async fn test_network_error() {
         .timeout(std::time::Duration::from_millis(100))
         .build()
         .unwrap();
-    
-    let result = client.index()
-        .krx_daily()
-        .date("20240105")
-        .fetch()
-        .await;
-    
+
+    let result = client.index().krx_daily().date("20240105").fetch().await;
+
     assert!(result.is_err());
     if let Err(Error::Network(_)) = result {
         // 네트워크 오류 발생

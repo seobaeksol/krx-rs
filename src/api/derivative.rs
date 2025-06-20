@@ -1,8 +1,8 @@
 use crate::{
-    client::Client, 
-    data::derivative::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::derivative::*,
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -75,8 +75,9 @@ impl<'a> FuturesDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::FuturesDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::FuturesDailyRecord>>(
                 "/drv/fut_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -114,8 +115,9 @@ impl<'a> EquityStockFuturesDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::EquityStockFuturesDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::EquityStockFuturesDailyRecord>>(
                 "/drv/eqsfu_stk_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -153,8 +155,9 @@ impl<'a> EquityKosdaqFuturesDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::EquityKosdaqFuturesDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::EquityKosdaqFuturesDailyRecord>>(
                 "/drv/eqkfu_ksq_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -192,8 +195,9 @@ impl<'a> OptionsDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::OptionsDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::OptionsDailyRecord>>(
                 "/drv/opt_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -231,8 +235,9 @@ impl<'a> EquityStockOptionsDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::EquityStockOptionsDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::EquityStockOptionsDailyRecord>>(
                 "/drv/eqsop_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -270,8 +275,9 @@ impl<'a> EquityKosdaqOptionsDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::derivative::EquityKosdaqOptionsDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::derivative::EquityKosdaqOptionsDailyRecord>>(
                 "/drv/eqkop_bydd_trd",
                 &[("basDd", &base_date)],
             )

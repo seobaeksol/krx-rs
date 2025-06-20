@@ -1,8 +1,8 @@
 use crate::{
-    client::Client, 
-    data::index::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::index::*,
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -73,8 +73,9 @@ impl<'a> KrxIndexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::index::KrxIndexDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::index::KrxIndexDailyRecord>>(
                 "/idx/krx_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -112,8 +113,9 @@ impl<'a> KospiIndexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::index::KospiIndexDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::index::KospiIndexDailyRecord>>(
                 "/idx/kospi_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -151,8 +153,9 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::index::KosdaqIndexDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::index::KosdaqIndexDailyRecord>>(
                 "/idx/kosdaq_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -190,8 +193,9 @@ impl<'a> BondIndexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::index::BondIndexDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::index::BondIndexDailyRecord>>(
                 "/idx/bon_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -229,8 +233,9 @@ impl<'a> DerivativeIndexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::index::DerivativeIndexDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::index::DerivativeIndexDailyRecord>>(
                 "/idx/drvprod_dd_trd",
                 &[("basDd", &base_date)],
             )

@@ -1,8 +1,8 @@
 use crate::{
-    client::Client, 
-    data::general::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::general::*,
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -60,8 +60,9 @@ impl<'a> OilDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::general::OilDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::general::OilDailyRecord>>(
                 "/gen/oil_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -99,8 +100,9 @@ impl<'a> GoldDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::general::GoldDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::general::GoldDailyRecord>>(
                 "/gen/gold_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -138,8 +140,9 @@ impl<'a> EmissionsDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::general::EmissionsDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::general::EmissionsDailyRecord>>(
                 "/gen/ets_bydd_trd",
                 &[("basDd", &base_date)],
             )

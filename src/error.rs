@@ -19,10 +19,7 @@ pub enum Error {
 
     /// API 서버 오류 응답
     #[error("API error (status {status_code}): {message}")]
-    ApiError {
-        status_code: u16,
-        message: String,
-    },
+    ApiError { status_code: u16, message: String },
 
     /// 잘못된 입력 파라미터
     #[error("Invalid input: {0}")]

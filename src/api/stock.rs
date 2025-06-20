@@ -1,8 +1,8 @@
 use crate::{
-    client::Client, 
-    data::stock::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::{ApiResponse, stock::*},
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -88,11 +88,9 @@ impl<'a> KospiDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::KospiDailyRecord>>(
-                "/sto/stk_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<KospiDailyRecord>>("/sto/stk_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_kospi_daily(response)
@@ -127,11 +125,9 @@ impl<'a> KosdaqDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::KosdaqDailyRecord>>(
-                "/sto/ksq_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<KosdaqDailyRecord>>("/sto/ksq_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_kosdaq_daily(response)
@@ -166,11 +162,9 @@ impl<'a> KonexDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::KonexDailyRecord>>(
-                "/sto/knx_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<KonexDailyRecord>>("/sto/knx_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_konex_daily(response)
@@ -205,8 +199,9 @@ impl<'a> StockWarrantDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::StockWarrantDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<StockWarrantDailyRecord>>(
                 "/sto/sw_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -244,11 +239,9 @@ impl<'a> StockRightDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::StockRightDailyRecord>>(
-                "/sto/sr_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<StockRightDailyRecord>>("/sto/sr_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_stock_right_daily(response)
@@ -267,8 +260,12 @@ impl<'a> KospiBaseInfoBuilder<'a> {
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::StockBaseInfoRecord>>("/sto/stk_isu_base_info", &[])
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
+                "/sto/stk_isu_base_info",
+                &[],
+            )
             .await?;
 
         parse_stock_base_info(response)
@@ -287,8 +284,12 @@ impl<'a> KosdaqBaseInfoBuilder<'a> {
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::StockBaseInfoRecord>>("/sto/ksq_isu_base_info", &[])
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
+                "/sto/ksq_isu_base_info",
+                &[],
+            )
             .await?;
 
         parse_stock_base_info(response)
@@ -307,8 +308,12 @@ impl<'a> KonexBaseInfoBuilder<'a> {
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::stock::StockBaseInfoRecord>>("/sto/knx_isu_base_info", &[])
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
+                "/sto/knx_isu_base_info",
+                &[],
+            )
             .await?;
 
         parse_stock_base_info(response)

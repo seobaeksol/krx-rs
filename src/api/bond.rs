@@ -1,8 +1,11 @@
 use crate::{
-    client::Client, 
-    data::bond::*, 
+    api::common::{today_string, validate_base_date},
+    client::Client,
+    data::{
+        ApiResponse,
+        bond::{KtsDailyRecord, *},
+    },
     error::Result,
-    api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;
 
@@ -60,11 +63,9 @@ impl<'a> KtsDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::bond::KtsDailyRecord>>(
-                "/bon/kts_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+        let response = self
+            .client
+            .get::<ApiResponse<KtsDailyRecord>>("/bon/kts_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_kts_daily(response)
@@ -99,8 +100,9 @@ impl<'a> BondDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::bond::BondDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::bond::BondDailyRecord>>(
                 "/bon/bnd_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -138,8 +140,9 @@ impl<'a> SmallBondDailyBuilder<'a> {
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::bond::SmallBondDailyRecord>>(
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::bond::SmallBondDailyRecord>>(
                 "/bon/smb_bydd_trd",
                 &[("basDd", &base_date)],
             )

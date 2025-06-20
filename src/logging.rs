@@ -1,5 +1,5 @@
 use tracing::info;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 /// 로깅 설정 구조체
 #[derive(Debug, Clone)]
@@ -27,11 +27,10 @@ impl Default for LoggingConfig {
 
 /// 로깅 초기화
 pub fn init_logging(config: &LoggingConfig) -> Result<(), Box<dyn std::error::Error>> {
-    let env_filter = EnvFilter::try_from_default_env()
-        .or_else(|_| EnvFilter::try_new(&config.level))?;
+    let env_filter =
+        EnvFilter::try_from_default_env().or_else(|_| EnvFilter::try_new(&config.level))?;
 
-    let subscriber = tracing_subscriber::registry()
-        .with(env_filter);
+    let subscriber = tracing_subscriber::registry().with(env_filter);
 
     if config.json_format {
         // JSON 형태 출력
@@ -39,7 +38,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), Box<dyn std::error::Er
             .json()
             .with_current_span(true)
             .with_span_list(true);
-        
+
         subscriber.with(json_layer).try_init()?;
     } else {
         // 일반 텍스트 출력
@@ -48,7 +47,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), Box<dyn std::error::Er
             .with_thread_ids(true)
             .with_file(true)
             .with_line_number(true);
-            
+
         subscriber.with(fmt_layer).try_init()?;
     }
 
@@ -63,8 +62,8 @@ macro_rules! log_filtered {
         $level!(
             message = $msg,
             $(
-                $key = if stringify!($key).contains("key") || 
-                         stringify!($key).contains("auth") || 
+                $key = if stringify!($key).contains("key") ||
+                         stringify!($key).contains("auth") ||
                          stringify!($key).contains("token") {
                     "***FILTERED***"
                 } else {

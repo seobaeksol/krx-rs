@@ -1,14 +1,11 @@
 use super::{
-    ApiResponse, 
-    deserialize_krx_date,
-    deserialize_optional_f64,
+    ApiResponse, deserialize_krx_date, deserialize_optional_f64, deserialize_optional_percentage,
     deserialize_optional_u64,
-    deserialize_optional_percentage
 };
+use crate::error::Result;
+use chrono::NaiveDate;
 use polars::prelude::*;
 use serde::Deserialize;
-use chrono::NaiveDate;
-use crate::error::Result;
 
 /// 유가증권 일별매매정보 레코드
 #[derive(Debug, Deserialize)]
@@ -16,59 +13,65 @@ pub struct KospiDailyRecord {
     /// 기준일자
     #[serde(rename = "BAS_DD", deserialize_with = "deserialize_krx_date")]
     pub base_date: NaiveDate,
-    
+
     /// 종목코드
     #[serde(rename = "ISU_CD")]
     pub issue_code: String,
-    
+
     /// 종목명
     #[serde(rename = "ISU_NM")]
     pub issue_name: String,
-    
+
     /// 시장구분
     #[serde(rename = "MKT_NM")]
     pub market_name: String,
-    
+
     /// 소속부
     #[serde(rename = "SECT_TP_NM")]
     pub sector_type: String,
-    
+
     /// 종가
     #[serde(rename = "TDD_CLSPRC", deserialize_with = "deserialize_optional_f64")]
     pub close_price: Option<f64>,
-    
+
     /// 대비
-    #[serde(rename = "CMPPREVDD_PRC", deserialize_with = "deserialize_optional_f64")]
+    #[serde(
+        rename = "CMPPREVDD_PRC",
+        deserialize_with = "deserialize_optional_f64"
+    )]
     pub price_change: Option<f64>,
-    
+
     /// 등락률 (%)
-    #[serde(rename = "FLUC_RT", deserialize_with = "deserialize_optional_percentage")]
+    #[serde(
+        rename = "FLUC_RT",
+        deserialize_with = "deserialize_optional_percentage"
+    )]
     pub fluctuation_rate: Option<f64>,
-    
+
     /// 시가
     #[serde(rename = "TDD_OPNPRC", deserialize_with = "deserialize_optional_f64")]
     pub open_price: Option<f64>,
-    
+
     /// 고가
     #[serde(rename = "TDD_HGPRC", deserialize_with = "deserialize_optional_f64")]
     pub high_price: Option<f64>,
-    
+
     /// 저가
     #[serde(rename = "TDD_LWPRC", deserialize_with = "deserialize_optional_f64")]
     pub low_price: Option<f64>,
-    
+
     /// 거래량
     #[serde(rename = "ACC_TRDVOL", deserialize_with = "deserialize_optional_u64")]
     pub trading_volume: Option<u64>,
-    
+
     /// 거래대금
     #[serde(rename = "ACC_TRDVAL", deserialize_with = "deserialize_optional_u64")]
     pub trading_value: Option<u64>,
-    
+
     /// 시가총액
     #[serde(rename = "MKTCAP", deserialize_with = "deserialize_optional_u64")]
     pub market_cap: Option<u64>,
-    
+
     /// 상장주식수
     #[serde(rename = "LIST_SHRS", deserialize_with = "deserialize_optional_u64")]
     pub listed_shares: Option<u64>,
@@ -86,81 +89,90 @@ pub struct StockWarrantDailyRecord {
     /// 기준일자
     #[serde(rename = "BAS_DD", deserialize_with = "deserialize_krx_date")]
     pub base_date: NaiveDate,
-    
+
     /// 시장구분
     #[serde(rename = "MKT_NM")]
     pub market_name: String,
-    
+
     /// 종목코드
     #[serde(rename = "ISU_CD")]
     pub issue_code: String,
-    
+
     /// 종목명
     #[serde(rename = "ISU_NM")]
     pub issue_name: String,
-    
+
     /// 종가
     #[serde(rename = "TDD_CLSPRC", deserialize_with = "deserialize_optional_f64")]
     pub close_price: Option<f64>,
-    
+
     /// 대비
-    #[serde(rename = "CMPPREVDD_PRC", deserialize_with = "deserialize_optional_f64")]
+    #[serde(
+        rename = "CMPPREVDD_PRC",
+        deserialize_with = "deserialize_optional_f64"
+    )]
     pub price_change: Option<f64>,
-    
+
     /// 등락률 (%)
-    #[serde(rename = "FLUC_RT", deserialize_with = "deserialize_optional_percentage")]
+    #[serde(
+        rename = "FLUC_RT",
+        deserialize_with = "deserialize_optional_percentage"
+    )]
     pub fluctuation_rate: Option<f64>,
-    
+
     /// 시가
     #[serde(rename = "TDD_OPNPRC", deserialize_with = "deserialize_optional_f64")]
     pub open_price: Option<f64>,
-    
+
     /// 고가
     #[serde(rename = "TDD_HGPRC", deserialize_with = "deserialize_optional_f64")]
     pub high_price: Option<f64>,
-    
+
     /// 저가
     #[serde(rename = "TDD_LWPRC", deserialize_with = "deserialize_optional_f64")]
     pub low_price: Option<f64>,
-    
+
     /// 거래량
     #[serde(rename = "ACC_TRDVOL", deserialize_with = "deserialize_optional_u64")]
     pub trading_volume: Option<u64>,
-    
+
     /// 거래대금
     #[serde(rename = "ACC_TRDVAL", deserialize_with = "deserialize_optional_u64")]
     pub trading_value: Option<u64>,
-    
+
     /// 시가총액
     #[serde(rename = "MKTCAP", deserialize_with = "deserialize_optional_u64")]
     pub market_cap: Option<u64>,
-    
+
     /// 상장증권수
     #[serde(rename = "LIST_SHRS", deserialize_with = "deserialize_optional_u64")]
     pub listed_shares: Option<u64>,
-    
+
     /// 행사가격
     #[serde(rename = "EXER_PRC", deserialize_with = "deserialize_optional_f64")]
     pub exercise_price: Option<f64>,
-    
+
     /// 존속기간_시작일
     #[serde(rename = "EXST_STRT_DD")]
     pub existence_start_date: String,
-    
+
     /// 존속기간_종료일
     #[serde(rename = "EXST_END_DD")]
     pub existence_end_date: String,
-    
+
     /// 목적주권_종목코드
     #[serde(rename = "TARSTK_ISU_SRT_CD")]
     pub target_stock_code: String,
-    
+
     /// 목적주권_종목명
     #[serde(rename = "TARSTK_ISU_NM")]
     pub target_stock_name: String,
-    
+
     /// 목적주권_종가
-    #[serde(rename = "TARSTK_ISU_PRSNT_PRC", deserialize_with = "deserialize_optional_f64")]
+    #[serde(
+        rename = "TARSTK_ISU_PRSNT_PRC",
+        deserialize_with = "deserialize_optional_f64"
+    )]
     pub target_stock_price: Option<f64>,
 }
 
@@ -170,77 +182,86 @@ pub struct StockRightDailyRecord {
     /// 기준일자
     #[serde(rename = "BAS_DD", deserialize_with = "deserialize_krx_date")]
     pub base_date: NaiveDate,
-    
+
     /// 시장구분
     #[serde(rename = "MKT_NM")]
     pub market_name: String,
-    
+
     /// 종목코드
     #[serde(rename = "ISU_CD")]
     pub issue_code: String,
-    
+
     /// 종목명
     #[serde(rename = "ISU_NM")]
     pub issue_name: String,
-    
+
     /// 종가
     #[serde(rename = "TDD_CLSPRC", deserialize_with = "deserialize_optional_f64")]
     pub close_price: Option<f64>,
-    
+
     /// 대비
-    #[serde(rename = "CMPPREVDD_PRC", deserialize_with = "deserialize_optional_f64")]
+    #[serde(
+        rename = "CMPPREVDD_PRC",
+        deserialize_with = "deserialize_optional_f64"
+    )]
     pub price_change: Option<f64>,
-    
+
     /// 등락률 (%)
-    #[serde(rename = "FLUC_RT", deserialize_with = "deserialize_optional_percentage")]
+    #[serde(
+        rename = "FLUC_RT",
+        deserialize_with = "deserialize_optional_percentage"
+    )]
     pub fluctuation_rate: Option<f64>,
-    
+
     /// 시가
     #[serde(rename = "TDD_OPNPRC", deserialize_with = "deserialize_optional_f64")]
     pub open_price: Option<f64>,
-    
+
     /// 고가
     #[serde(rename = "TDD_HGPRC", deserialize_with = "deserialize_optional_f64")]
     pub high_price: Option<f64>,
-    
+
     /// 저가
     #[serde(rename = "TDD_LWPRC", deserialize_with = "deserialize_optional_f64")]
     pub low_price: Option<f64>,
-    
+
     /// 거래량
     #[serde(rename = "ACC_TRDVOL", deserialize_with = "deserialize_optional_u64")]
     pub trading_volume: Option<u64>,
-    
+
     /// 거래대금
     #[serde(rename = "ACC_TRDVAL", deserialize_with = "deserialize_optional_u64")]
     pub trading_value: Option<u64>,
-    
+
     /// 시가총액
     #[serde(rename = "MKTCAP", deserialize_with = "deserialize_optional_u64")]
     pub market_cap: Option<u64>,
-    
+
     /// 상장증서수
     #[serde(rename = "LIST_SHRS", deserialize_with = "deserialize_optional_u64")]
     pub listed_shares: Option<u64>,
-    
+
     /// 신주발행가
     #[serde(rename = "ISU_PRC", deserialize_with = "deserialize_optional_f64")]
     pub issue_price: Option<f64>,
-    
+
     /// 상장폐지일
     #[serde(rename = "DELIST_DD")]
     pub delisting_date: String,
-    
+
     /// 목적주권_종목코드
     #[serde(rename = "TARSTK_ISU_SRT_CD")]
     pub target_stock_code: String,
-    
+
     /// 목적주권_종목명
     #[serde(rename = "TARSTK_ISU_NM")]
     pub target_stock_name: String,
-    
+
     /// 목적주권_종가
-    #[serde(rename = "TARSTK_ISU_PRSNT_PRC", deserialize_with = "deserialize_optional_f64")]
+    #[serde(
+        rename = "TARSTK_ISU_PRSNT_PRC",
+        deserialize_with = "deserialize_optional_f64"
+    )]
     pub target_stock_price: Option<f64>,
 }
 
@@ -250,47 +271,47 @@ pub struct StockBaseInfoRecord {
     /// 표준코드
     #[serde(rename = "ISU_CD")]
     pub issue_code: String,
-    
+
     /// 단축코드
     #[serde(rename = "ISU_SRT_CD")]
     pub issue_short_code: String,
-    
+
     /// 한글 종목명
     #[serde(rename = "ISU_NM")]
     pub issue_name: String,
-    
+
     /// 한글 종목약명
     #[serde(rename = "ISU_ABBRV")]
     pub issue_abbreviation: String,
-    
+
     /// 영문 종목명
     #[serde(rename = "ISU_ENG_NM")]
     pub issue_english_name: String,
-    
+
     /// 상장일
     #[serde(rename = "LIST_DD")]
     pub listing_date: String,
-    
+
     /// 시장구분
     #[serde(rename = "MKT_TP_NM")]
     pub market_type: String,
-    
+
     /// 증권구분
     #[serde(rename = "SECUGRP_NM")]
     pub security_group: String,
-    
+
     /// 소속부
     #[serde(rename = "SECT_TP_NM")]
     pub sector_type: String,
-    
+
     /// 주식종류
     #[serde(rename = "KIND_STKCERT_TP_NM")]
     pub stock_type: String,
-    
+
     /// 액면가
     #[serde(rename = "PARVAL", deserialize_with = "deserialize_optional_f64")]
     pub par_value: Option<f64>,
-    
+
     /// 상장주식수
     #[serde(rename = "LIST_SHRS", deserialize_with = "deserialize_optional_u64")]
     pub listed_shares: Option<u64>,
@@ -299,11 +320,11 @@ pub struct StockBaseInfoRecord {
 /// KOSPI 일별매매정보를 DataFrame으로 변환
 pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<DataFrame> {
     let records = response.data;
-    
+
     if records.is_empty() {
         return Ok(DataFrame::empty());
     }
-    
+
     // 각 필드를 벡터로 수집
     let mut dates = Vec::with_capacity(records.len());
     let mut codes = Vec::with_capacity(records.len());
@@ -320,7 +341,7 @@ pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<Data
     let mut trading_values = Vec::with_capacity(records.len());
     let mut market_caps = Vec::with_capacity(records.len());
     let mut listed_shares = Vec::with_capacity(records.len());
-    
+
     for record in records {
         dates.push(record.base_date.format("%Y-%m-%d").to_string());
         codes.push(record.issue_code);
@@ -338,7 +359,7 @@ pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<Data
         market_caps.push(record.market_cap.map(|v| v as i64));
         listed_shares.push(record.listed_shares.map(|v| v as i64));
     }
-    
+
     // DataFrame 생성
     let df = df! {
         "날짜" => dates,
@@ -357,7 +378,7 @@ pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<Data
         "시가총액" => market_caps,
         "상장주식수" => listed_shares,
     }?;
-    
+
     Ok(df)
 }
 
@@ -372,13 +393,15 @@ pub fn parse_konex_daily(response: ApiResponse<KonexDailyRecord>) -> Result<Data
 }
 
 /// 신주인수권증권 일별매매정보를 DataFrame으로 변환
-pub fn parse_stock_warrant_daily(response: ApiResponse<StockWarrantDailyRecord>) -> Result<DataFrame> {
+pub fn parse_stock_warrant_daily(
+    response: ApiResponse<StockWarrantDailyRecord>,
+) -> Result<DataFrame> {
     let records = response.data;
-    
+
     if records.is_empty() {
         return Ok(DataFrame::empty());
     }
-    
+
     let mut dates = Vec::with_capacity(records.len());
     let mut market_names = Vec::with_capacity(records.len());
     let mut issue_codes = Vec::with_capacity(records.len());
@@ -387,7 +410,7 @@ pub fn parse_stock_warrant_daily(response: ApiResponse<StockWarrantDailyRecord>)
     let mut exercise_prices = Vec::with_capacity(records.len());
     let mut target_stock_names = Vec::with_capacity(records.len());
     let mut target_stock_prices = Vec::with_capacity(records.len());
-    
+
     for record in records {
         dates.push(record.base_date.format("%Y-%m-%d").to_string());
         market_names.push(record.market_name);
@@ -398,7 +421,7 @@ pub fn parse_stock_warrant_daily(response: ApiResponse<StockWarrantDailyRecord>)
         target_stock_names.push(record.target_stock_name);
         target_stock_prices.push(record.target_stock_price);
     }
-    
+
     let df = df! {
         "날짜" => dates,
         "시장구분" => market_names,
@@ -409,18 +432,18 @@ pub fn parse_stock_warrant_daily(response: ApiResponse<StockWarrantDailyRecord>)
         "목적주권명" => target_stock_names,
         "목적주권가격" => target_stock_prices,
     }?;
-    
+
     Ok(df)
 }
 
 /// 신주인수권증서 일별매매정보를 DataFrame으로 변환
 pub fn parse_stock_right_daily(response: ApiResponse<StockRightDailyRecord>) -> Result<DataFrame> {
     let records = response.data;
-    
+
     if records.is_empty() {
         return Ok(DataFrame::empty());
     }
-    
+
     let mut dates = Vec::with_capacity(records.len());
     let mut market_names = Vec::with_capacity(records.len());
     let mut issue_codes = Vec::with_capacity(records.len());
@@ -429,7 +452,7 @@ pub fn parse_stock_right_daily(response: ApiResponse<StockRightDailyRecord>) -> 
     let mut issue_prices = Vec::with_capacity(records.len());
     let mut target_stock_names = Vec::with_capacity(records.len());
     let mut target_stock_prices = Vec::with_capacity(records.len());
-    
+
     for record in records {
         dates.push(record.base_date.format("%Y-%m-%d").to_string());
         market_names.push(record.market_name);
@@ -440,7 +463,7 @@ pub fn parse_stock_right_daily(response: ApiResponse<StockRightDailyRecord>) -> 
         target_stock_names.push(record.target_stock_name);
         target_stock_prices.push(record.target_stock_price);
     }
-    
+
     let df = df! {
         "날짜" => dates,
         "시장구분" => market_names,
@@ -451,18 +474,18 @@ pub fn parse_stock_right_daily(response: ApiResponse<StockRightDailyRecord>) -> 
         "목적주권명" => target_stock_names,
         "목적주권가격" => target_stock_prices,
     }?;
-    
+
     Ok(df)
 }
 
 /// 종목기본정보를 DataFrame으로 변환
 pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Result<DataFrame> {
     let records = response.data;
-    
+
     if records.is_empty() {
         return Ok(DataFrame::empty());
     }
-    
+
     let mut issue_codes = Vec::with_capacity(records.len());
     let mut issue_short_codes = Vec::with_capacity(records.len());
     let mut issue_names = Vec::with_capacity(records.len());
@@ -475,7 +498,7 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
     let mut stock_types = Vec::with_capacity(records.len());
     let mut par_values = Vec::with_capacity(records.len());
     let mut listed_shares = Vec::with_capacity(records.len());
-    
+
     for record in records {
         issue_codes.push(record.issue_code);
         issue_short_codes.push(record.issue_short_code);
@@ -490,7 +513,7 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
         par_values.push(record.par_value);
         listed_shares.push(record.listed_shares.map(|v| v as i64));
     }
-    
+
     let df = df! {
         "표준코드" => issue_codes,
         "단축코드" => issue_short_codes,
@@ -505,6 +528,6 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
         "액면가" => par_values,
         "상장주식수" => listed_shares,
     }?;
-    
+
     Ok(df)
 }

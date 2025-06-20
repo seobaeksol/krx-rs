@@ -1,13 +1,13 @@
-use serde::{Deserialize, Deserializer};
 use chrono::NaiveDate;
+use serde::{Deserialize, Deserializer};
 
-pub mod stock;
-pub mod index;
 pub mod bond;
-pub mod etp;
 pub mod derivative;
-pub mod general;
 pub mod esg;
+pub mod etp;
+pub mod general;
+pub mod index;
+pub mod stock;
 
 /// KRX API 공통 응답 구조
 #[derive(Debug, Deserialize)]
@@ -22,8 +22,7 @@ where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    NaiveDate::parse_from_str(&s, "%Y%m%d")
-        .map_err(serde::de::Error::custom)
+    NaiveDate::parse_from_str(&s, "%Y%m%d").map_err(serde::de::Error::custom)
 }
 
 /// 옵셔널 KRX 날짜 형식을 변환하는 헬퍼
@@ -82,9 +81,7 @@ where
     if s.is_empty() || s == "-" {
         Ok(None)
     } else {
-        s.parse::<f64>()
-            .map(Some)
-            .map_err(serde::de::Error::custom)
+        s.parse::<f64>().map(Some).map_err(serde::de::Error::custom)
     }
 }
 

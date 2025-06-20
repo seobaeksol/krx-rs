@@ -1,8 +1,4 @@
-use crate::{
-    client::Client, 
-    data::esg::*, 
-    error::Result
-};
+use crate::{client::Client, data::esg::*, error::Result};
 use polars::prelude::DataFrame;
 
 /// ESG 관련 API 엔드포인트
@@ -33,8 +29,9 @@ impl<'a> SriBondInfoBuilder<'a> {
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
-        let response = self.client
-            .get::<crate::data::ApiResponse<crate::data::esg::SriBondInfoRecord>>("/esg/sri_bond_info", &[])
+        let response = self
+            .client
+            .get::<ApiResponse<crate::data::esg::SriBondInfoRecord>>("/esg/sri_bond_info", &[])
             .await?;
 
         parse_sri_bond_info(response)
