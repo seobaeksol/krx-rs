@@ -19,11 +19,11 @@ fn test_stock_api_kospi_daily_builder() {
     let builder = stock_api.kospi_daily();
 
     // 날짜 설정 메서드 체이닝 테스트
-    let builder_with_date = builder.date("20240105");
+    let _builder_with_date = builder.date("20240105");
 
     // 오늘 날짜 설정 테스트
     let client2 = create_test_client();
-    let builder_with_today = client2.stock().kospi_daily().today();
+    let _builder_with_today = client2.stock().kospi_daily().today();
 
     // 체이닝 테스트
     let client3 = create_test_client();
@@ -201,7 +201,7 @@ fn test_today_method_consistency() {
     let client = create_test_client();
 
     // today() 메서드는 현재 날짜를 YYYYMMDD 형식으로 설정해야 함
-    let expected_today = Local::now().format("%Y%m%d").to_string();
+    let _expected_today = Local::now().format("%Y%m%d").to_string();
 
     // 실제로는 내부 구현이므로 호출만 테스트
     let _builder = client.stock().kospi_daily().today();
