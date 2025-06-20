@@ -2,10 +2,13 @@
 name = "krx-rs"
 version = "0.1.0"
 edition = "2024"
-authors = ["suyoungkim <suyoung@example.com>"]
-license = "MIT OR Apache-2.0"
+authors = ["suyoungkim <seobeaksol@gmail.com>"]
+license = "MIT"
 description = "KRX Open API를 위한 Rust 클라이언트"
 repository = "https://github.com/suyoungkim/krx-rs"
+homepage = "https://github.com/suyoungkim/krx-rs"
+documentation = "https://docs.rs/krx-rs"
+readme = "README.md"
 keywords = ["krx", "korea-exchange", "stock", "finance", "api"]
 categories = ["api-bindings", "finance"]
 
