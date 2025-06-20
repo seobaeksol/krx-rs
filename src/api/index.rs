@@ -1,4 +1,9 @@
-use crate::{client::Client, data::index::*, error::{Error, Result}};
+use crate::{
+    client::Client, 
+    data::index::*, 
+    error::{Error, Result},
+    api::common::{validate_base_date, today_string}
+};
 use polars::prelude::DataFrame;
 
 /// 지수 관련 API 엔드포인트
@@ -25,6 +30,16 @@ impl<'a> IndexApi<'a> {
     pub fn kosdaq_daily(&self) -> KosdaqIndexDailyBuilder<'a> {
         KosdaqIndexDailyBuilder::new(self.client)
     }
+
+    /// 채권지수 시세정보 조회
+    pub fn bond_daily(&self) -> BondIndexDailyBuilder<'a> {
+        BondIndexDailyBuilder::new(self.client)
+    }
+
+    /// 파생상품지수 시세정보 조회
+    pub fn derivative_daily(&self) -> DerivativeIndexDailyBuilder<'a> {
+        DerivativeIndexDailyBuilder::new(self.client)
+    }
 }
 
 /// KRX 지수 일별시세정보 빌더
@@ -50,21 +65,13 @@ impl<'a> KrxIndexDailyBuilder<'a> {
 
     /// 오늘 날짜로 설정
     pub fn today(mut self) -> Self {
-        use chrono::Local;
-        self.base_date = Some(Local::now().format("%Y%m%d").to_string());
+        self.base_date = Some(today_string());
         self
     }
 
     /// API 호출 및 데이터 조회
     pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
-
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
@@ -97,15 +104,13 @@ impl<'a> KospiIndexDailyBuilder<'a> {
         self
     }
 
-    pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
 
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
@@ -114,7 +119,7 @@ impl<'a> KospiIndexDailyBuilder<'a> {
             )
             .await?;
 
-        parse_krx_index_daily(response) // TODO: KOSPI 전용 파서 구현 필요
+        parse_kospi_index_daily(response)
     }
 }
 
@@ -138,15 +143,13 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
         self
     }
 
-    pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
 
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
@@ -155,11 +158,84 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
             )
             .await?;
 
-        parse_krx_index_daily(response) // TODO: KOSDAQ 전용 파서 구현 필요
+        parse_kosdaq_index_daily(response)
     }
 }
 
-/// 날짜 형식 검증 (YYYYMMDD)
-fn is_valid_date_format(date: &str) -> bool {
-    date.len() == 8 && date.chars().all(|c| c.is_numeric())
+/// 채권지수 시세정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct BondIndexDailyBuilder<'a> {
+    client: &'a Client,
+    base_date: Option<String>,
+}
+
+impl<'a> BondIndexDailyBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
+
+        let response = self.client
+            .get(
+                "/idx/bon_dd_trd",
+                &[("basDd", &base_date)],
+            )
+            .await?;
+
+        parse_bond_index_daily(response)
+    }
+}
+
+/// 파생상품지수 시세정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct DerivativeIndexDailyBuilder<'a> {
+    client: &'a Client,
+    base_date: Option<String>,
+}
+
+impl<'a> DerivativeIndexDailyBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
+
+        let response = self.client
+            .get(
+                "/idx/drvprod_dd_trd",
+                &[("basDd", &base_date)],
+            )
+            .await?;
+
+        parse_derivative_index_daily(response)
+    }
 }

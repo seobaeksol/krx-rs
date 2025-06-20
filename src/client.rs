@@ -185,6 +185,11 @@ impl Client {
     pub fn general(&self) -> api::general::GeneralApi {
         api::general::GeneralApi::new(self)
     }
+
+    /// ESG API 접근
+    pub fn esg(&self) -> api::esg::EsgApi {
+        api::esg::EsgApi::new(self)
+    }
 }
 
 /// 클라이언트 빌더

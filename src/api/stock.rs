@@ -1,4 +1,9 @@
-use crate::{client::Client, data::stock::*, error::{Error, Result}};
+use crate::{
+    client::Client, 
+    data::stock::*, 
+    error::{Error, Result},
+    api::common::{validate_base_date, today_string}
+};
 use polars::prelude::DataFrame;
 
 /// 주식 관련 API 엔드포인트
@@ -26,9 +31,29 @@ impl<'a> StockApi<'a> {
         KonexDailyBuilder::new(self.client)
     }
 
+    /// 신주인수권증권 일별매매정보 조회
+    pub fn stock_warrant_daily(&self) -> StockWarrantDailyBuilder<'a> {
+        StockWarrantDailyBuilder::new(self.client)
+    }
+
+    /// 신주인수권증서 일별매매정보 조회
+    pub fn stock_right_daily(&self) -> StockRightDailyBuilder<'a> {
+        StockRightDailyBuilder::new(self.client)
+    }
+
     /// 유가증권 종목기본정보 조회
-    pub fn kospi_info(&self) -> KospiInfoBuilder<'a> {
-        KospiInfoBuilder::new(self.client)
+    pub fn kospi_base_info(&self) -> KospiBaseInfoBuilder<'a> {
+        KospiBaseInfoBuilder::new(self.client)
+    }
+
+    /// 코스닥 종목기본정보 조회
+    pub fn kosdaq_base_info(&self) -> KosdaqBaseInfoBuilder<'a> {
+        KosdaqBaseInfoBuilder::new(self.client)
+    }
+
+    /// 코넥스 종목기본정보 조회
+    pub fn konex_base_info(&self) -> KonexBaseInfoBuilder<'a> {
+        KonexBaseInfoBuilder::new(self.client)
     }
 }
 
@@ -48,11 +73,6 @@ impl<'a> KospiDailyBuilder<'a> {
     }
 
     /// 조회 기준일자 설정 (YYYYMMDD)
-    ///
-    /// # Example
-    /// ```
-    /// .date("20240105")
-    /// ```
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
@@ -60,22 +80,13 @@ impl<'a> KospiDailyBuilder<'a> {
 
     /// 오늘 날짜로 설정
     pub fn today(mut self) -> Self {
-        use chrono::Local;
-        self.base_date = Some(Local::now().format("%Y%m%d").to_string());
+        self.base_date = Some(today_string());
         self
     }
 
     /// API 호출 및 데이터 조회
     pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
-
-        // 날짜 형식 검증
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
@@ -108,24 +119,22 @@ impl<'a> KosdaqDailyBuilder<'a> {
         self
     }
 
-    pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
 
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
-                "/sto/stk_bydd_trd",
+                "/sto/ksq_bydd_trd",
                 &[("basDd", &base_date)],
             )
             .await?;
 
-        parse_kospi_daily(response) // TODO: 별도 파서 구현 필요
+        parse_kosdaq_daily(response)
     }
 }
 
@@ -149,45 +158,159 @@ impl<'a> KonexDailyBuilder<'a> {
         self
     }
 
-    pub async fn fetch(self) -> Result<DataFrame> {
-        let base_date = self.base_date
-            .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
 
-        if !is_valid_date_format(&base_date) {
-            return Err(Error::InvalidInput(
-                "date must be in YYYYMMDD format".to_string()
-            ));
-        }
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
             .get(
-                "/sto/stk_bydd_trd",
+                "/sto/knx_bydd_trd",
                 &[("basDd", &base_date)],
             )
             .await?;
 
-        parse_kospi_daily(response) // TODO: 별도 파서 구현 필요
+        parse_konex_daily(response)
     }
 }
 
-/// 유가증권 종목기본정보 빌더 (기본 구조)
+/// 신주인수권증권 일별매매정보 빌더
 #[must_use = "Builder does nothing unless you call .fetch()"]
-pub struct KospiInfoBuilder<'a> {
+pub struct StockWarrantDailyBuilder<'a> {
+    client: &'a Client,
+    base_date: Option<String>,
+}
+
+impl<'a> StockWarrantDailyBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
+
+        let response = self.client
+            .get(
+                "/sto/sw_bydd_trd",
+                &[("basDd", &base_date)],
+            )
+            .await?;
+
+        parse_stock_warrant_daily(response)
+    }
+}
+
+/// 신주인수권증서 일별매매정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct StockRightDailyBuilder<'a> {
+    client: &'a Client,
+    base_date: Option<String>,
+}
+
+impl<'a> StockRightDailyBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    pub fn today(mut self) -> Self {
+        self.base_date = Some(today_string());
+        self
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
+
+        let response = self.client
+            .get(
+                "/sto/sr_bydd_trd",
+                &[("basDd", &base_date)],
+            )
+            .await?;
+
+        parse_stock_right_daily(response)
+    }
+}
+
+/// 유가증권 종목기본정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct KospiBaseInfoBuilder<'a> {
     client: &'a Client,
 }
 
-impl<'a> KospiInfoBuilder<'a> {
+impl<'a> KospiBaseInfoBuilder<'a> {
     fn new(client: &'a Client) -> Self {
         Self { client }
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
-        // TODO: 실제 API 엔드포인트 구현
-        Err(Error::InvalidInput("Not implemented yet".to_string()))
+        let response = self.client
+            .get("/sto/stk_isu_base_info", &[])
+            .await?;
+
+        parse_stock_base_info(response)
     }
 }
 
-/// 날짜 형식 검증 (YYYYMMDD)
-fn is_valid_date_format(date: &str) -> bool {
-    date.len() == 8 && date.chars().all(|c| c.is_numeric())
+/// 코스닥 종목기본정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct KosdaqBaseInfoBuilder<'a> {
+    client: &'a Client,
+}
+
+impl<'a> KosdaqBaseInfoBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self { client }
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let response = self.client
+            .get("/sto/ksq_isu_base_info", &[])
+            .await?;
+
+        parse_stock_base_info(response)
+    }
+}
+
+/// 코넥스 종목기본정보 빌더
+#[must_use = "Builder does nothing unless you call .fetch()"]
+pub struct KonexBaseInfoBuilder<'a> {
+    client: &'a Client,
+}
+
+impl<'a> KonexBaseInfoBuilder<'a> {
+    fn new(client: &'a Client) -> Self {
+        Self { client }
+    }
+
+    pub async fn fetch(self) -> Result<DataFrame> {
+        let response = self.client
+            .get("/sto/knx_isu_base_info", &[])
+            .await?;
+
+        parse_stock_base_info(response)
+    }
 }
