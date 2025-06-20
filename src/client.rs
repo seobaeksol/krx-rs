@@ -1,8 +1,15 @@
-use crate::{api, error::{Error, Result}, logging::LoggingConfig};
-use reqwest::{Client as HttpClient, header::{HeaderMap, HeaderValue}};
+use crate::{
+    api,
+    error::{Error, Result},
+    logging::LoggingConfig,
+};
+use reqwest::{
+    Client as HttpClient,
+    header::{HeaderMap, HeaderValue},
+};
 use serde::de::DeserializeOwned;
 use std::time::Duration;
-use tracing::{info, warn, error, debug, instrument};
+use tracing::{debug, error, info, instrument, warn};
 
 const BASE_URL: &str = "http://data-dbg.krx.co.kr/svc/apis";
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(30);
@@ -32,7 +39,10 @@ impl Client {
     }
 
     /// 로깅 설정과 함께 클라이언트 생성
-    pub fn with_logging(auth_key: impl Into<String>, logging_config: LoggingConfig) -> Result<Self> {
+    pub fn with_logging(
+        auth_key: impl Into<String>,
+        logging_config: LoggingConfig,
+    ) -> Result<Self> {
         crate::logging::init_logging(&logging_config)
             .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {}", e)))?;
         Ok(Self::new(auth_key))
@@ -51,22 +61,24 @@ impl Client {
     {
         let url = format!("{}{}", self.base_url, endpoint);
         let start_time = std::time::Instant::now();
-        
+
         // 요청 시작 로깅
         info!(
             endpoint = %endpoint,
             params_count = params.len(),
             "Starting API request"
         );
-        
+
         debug!(
             url = %url,
             params = ?params,
             "Request details"
         );
 
-        let response = self.http_client
+        let response = self
+            .http_client
             .get(&url)
+            .header("AUTH_KEY", &self.auth_key)
             .query(params)
             .send()
             .await
@@ -85,7 +97,7 @@ impl Client {
 
         if response.status().is_success() {
             let body = response.text().await?;
-            
+
             debug!(
                 endpoint = %endpoint,
                 status_code = status_code,
@@ -128,19 +140,19 @@ impl Client {
                     .and_then(|v| v.to_str().ok())
                     .and_then(|s| s.parse().ok())
                     .unwrap_or(60);
-                
+
                 warn!(
                     endpoint = %endpoint,
                     retry_after = retry_after,
                     duration_ms = duration.as_millis(),
                     "Rate limit exceeded"
                 );
-                
+
                 return Err(Error::RateLimit { retry_after });
             }
-            
+
             let message = response.text().await.unwrap_or_default();
-            
+
             error!(
                 endpoint = %endpoint,
                 status_code = status_code,
@@ -148,7 +160,7 @@ impl Client {
                 duration_ms = duration.as_millis(),
                 "API request failed"
             );
-            
+
             Err(Error::ApiError {
                 status_code,
                 message,
@@ -235,7 +247,8 @@ impl ClientBuilder {
 
     /// 클라이언트 빌드
     pub fn build(self) -> Result<Client> {
-        let auth_key = self.auth_key
+        let auth_key = self
+            .auth_key
             .ok_or_else(|| Error::InvalidInput("auth_key is required".to_string()))?;
 
         // 로깅 초기화
@@ -245,16 +258,20 @@ impl ClientBuilder {
         }
 
         let mut headers = HeaderMap::new();
-        headers.insert("AUTH_KEY", HeaderValue::from_str(&auth_key)
-            .map_err(|_| Error::InvalidInput("Invalid auth_key format".to_string()))?);
+        headers.insert(
+            "AUTH_KEY",
+            HeaderValue::from_str(&auth_key)
+                .map_err(|_| Error::InvalidInput("Invalid auth_key format".to_string()))?,
+        );
         headers.insert("Content-Type", HeaderValue::from_static("application/json"));
 
         let http_client = HttpClient::builder()
             .default_headers(headers)
             .timeout(self.timeout.unwrap_or(DEFAULT_TIMEOUT))
-            .user_agent(self.user_agent.unwrap_or_else(|| 
-                format!("krx-rs/{}", env!("CARGO_PKG_VERSION"))
-            ))
+            .user_agent(
+                self.user_agent
+                    .unwrap_or_else(|| format!("krx-rs/{}", env!("CARGO_PKG_VERSION"))),
+            )
             .build()?;
 
         Ok(Client {

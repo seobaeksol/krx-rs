@@ -77,7 +77,8 @@ KRX Open API의 전체 문서 목록입니다.
 ### 예시
 ```bash
 curl -X GET "http://data-dbg.krx.co.kr/svc/apis/idx/krx_dd_trd?basDd=20240105" \
-     -H "Content-Type: application/json"
+     -H "Content-Type: application/json" \
+     -H "AUTH_KEY: YOUR_AUTH_KEY"
 ```
 
 ### 참고사항
