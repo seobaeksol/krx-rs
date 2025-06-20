@@ -4,7 +4,6 @@ use krx_rs::data::{
     deserialize_optional_percentage, deserialize_optional_u64, deserialize_u64,
 };
 use serde::Deserialize;
-use serde_json;
 
 #[derive(Deserialize)]
 struct TestKrxDate {

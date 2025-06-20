@@ -42,7 +42,7 @@ async fn setup_test_client(
 
     let client = Client::builder()
         .auth_key("test_key")
-        .base_url(&mock_server.uri())
+        .base_url(mock_server.uri())
         .build()
         .unwrap();
 
@@ -95,7 +95,7 @@ async fn test_api_error_404() {
         .await;
     let client = Client::builder()
         .auth_key("test_key")
-        .base_url(&mock_server.uri())
+        .base_url(mock_server.uri())
         .build()
         .unwrap();
     let result = client.index().krx_daily().date("20240105").fetch().await;
@@ -118,7 +118,7 @@ async fn test_rate_limit_error() {
         .await;
     let client = Client::builder()
         .auth_key("test_key")
-        .base_url(&mock_server.uri())
+        .base_url(mock_server.uri())
         .build()
         .unwrap();
     let result = client.index().krx_daily().date("20240105").fetch().await;
@@ -135,7 +135,7 @@ async fn test_json_parsing_error() {
         .await;
     let client = Client::builder()
         .auth_key("test_key")
-        .base_url(&mock_server.uri())
+        .base_url(mock_server.uri())
         .build()
         .unwrap();
     let result = client.index().krx_daily().date("20240105").fetch().await;
