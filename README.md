@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 KRX(한국거래소) Open API를 위한 현대적이고 타입 안전한 Rust 클라이언트 라이브러리입니다.
+
 > API 인증키를 발급 받아야합니다. [시작하기](docs/getting-started.md) 참고.
 
 ## 데이터 제공 범위 안내
@@ -38,7 +39,7 @@ use krx_rs::Client;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new("your_auth_key");
-    
+
     // 특정 날짜의 데이터 조회
     let data_by_date = client
         .stock()
@@ -56,7 +57,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .fetch()
         .await?;
     println!("가장 최신 데이터:\\n{}", latest_data);
-        
+
     Ok(())
 }
 ```
@@ -64,6 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## 주요 API
 
 ### 주식 (Stock)
+
 ```rust
 // KOSPI 일별 시세
 let kospi_daily = client.stock().kospi_daily().today().fetch().await?;
@@ -73,6 +75,7 @@ let kosdaq_info = client.stock().kosdaq_base_info().fetch().await?;
 ```
 
 ### 지수 (Index)
+
 ```rust
 // KRX 지수
 let krx_index = client.index().krx_daily().date("20240105").fetch().await?;
@@ -82,30 +85,35 @@ let kospi_index = client.index().kospi_daily().today().fetch().await?;
 ```
 
 ### 채권 (Bond)
+
 ```rust
 // 국채 전문시장
 let treasury = client.bond().kts_daily().today().fetch().await?;
 ```
 
 ### ETP (ETF/ETN/ELW)
+
 ```rust
 // ETF 일별 시세
 let etf = client.etp().etf_daily().date("20240105").fetch().await?;
 ```
 
 ### 파생상품 (Derivatives)
+
 ```rust
 // 선물 일별 시세
 let futures = client.derivative().futures_daily().today().fetch().await?;
 ```
 
 ### 일반상품 (General)
+
 ```rust
 // 유가 정보
 let oil = client.general().oil_daily().today().fetch().await?;
 ```
 
 ### ESG
+
 ```rust
 // SRI 채권 정보
 let sri_bonds = client.esg().sri_bond_info().fetch().await?;
@@ -171,7 +179,7 @@ let filtered = df.lazy()
 
 ## 요구사항
 
-- Rust 1.75.0 이상
+- Rust 1.87.0 이상
 - KRX Open API 인증키 ([신청하기](https://openapi.krx.co.kr))
 
 ## 라이선스

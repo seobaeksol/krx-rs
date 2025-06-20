@@ -51,7 +51,7 @@ body:
       placeholder: |
         // 현재 사용하고 있는 코드나 시도해본 코드
         use krx_rs::Client;
-        
+
         let client = Client::new("auth_key");
         // ...
 
@@ -79,7 +79,7 @@ body:
       description: 필요한 경우 환경 정보를 제공해주세요.
       placeholder: |
         - OS: [예: Windows 11, macOS 14.0, Ubuntu 22.04]
-        - Rust 버전: [예: 1.75.0]
+        - Rust 버전: [예: 1.87.0]
         - 기타 관련 정보
 
   - type: textarea

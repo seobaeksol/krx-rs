@@ -55,7 +55,7 @@ body:
       render: rust
       placeholder: |
         use krx_rs::Client;
-        
+
         #[tokio::main]
         async fn main() {
             // 문제가 발생하는 코드
@@ -85,8 +85,8 @@ body:
       description: 실행 환경에 대한 정보를 제공해주세요.
       placeholder: |
         - OS: [예: Windows 11, macOS 14.0, Ubuntu 22.04]
-        - Rust 버전: [예: 1.75.0]
-        - Cargo 버전: [예: 1.75.0]
+        - Rust 버전: [예: 1.87.0]
+        - Cargo 버전: [예: 1.87.0]
     validations:
       required: true
 
