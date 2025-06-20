@@ -61,7 +61,7 @@ impl<'a> EtfDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::etp::EtfDailyRecord>>(
                 "/etp/etf_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -100,7 +100,7 @@ impl<'a> EtnDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::etp::EtnDailyRecord>>(
                 "/etp/etn_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -139,7 +139,7 @@ impl<'a> ElwDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::etp::ElwDailyRecord>>(
                 "/etp/elw_bydd_trd",
                 &[("basDd", &base_date)],
             )

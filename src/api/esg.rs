@@ -34,7 +34,7 @@ impl<'a> SriBondInfoBuilder<'a> {
 
     pub async fn fetch(self) -> Result<DataFrame> {
         let response = self.client
-            .get("/esg/sri_bond_info", &[])
+            .get::<crate::data::ApiResponse<crate::data::esg::SriBondInfoRecord>>("/esg/sri_bond_info", &[])
             .await?;
 
         parse_sri_bond_info(response)

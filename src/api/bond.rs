@@ -61,7 +61,7 @@ impl<'a> KtsDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::bond::KtsDailyRecord>>(
                 "/bon/kts_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -100,7 +100,7 @@ impl<'a> BondDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::bond::BondDailyRecord>>(
                 "/bon/bnd_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -139,7 +139,7 @@ impl<'a> SmallBondDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::bond::SmallBondDailyRecord>>(
                 "/bon/smb_bydd_trd",
                 &[("basDd", &base_date)],
             )

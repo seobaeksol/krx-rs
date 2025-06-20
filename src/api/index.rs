@@ -74,7 +74,7 @@ impl<'a> KrxIndexDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::index::KrxIndexDailyRecord>>(
                 "/idx/krx_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -113,7 +113,7 @@ impl<'a> KospiIndexDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::index::KospiIndexDailyRecord>>(
                 "/idx/kospi_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -152,7 +152,7 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::index::KosdaqIndexDailyRecord>>(
                 "/idx/kosdaq_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -191,7 +191,7 @@ impl<'a> BondIndexDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::index::BondIndexDailyRecord>>(
                 "/idx/bon_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -230,7 +230,7 @@ impl<'a> DerivativeIndexDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::index::DerivativeIndexDailyRecord>>(
                 "/idx/drvprod_dd_trd",
                 &[("basDd", &base_date)],
             )

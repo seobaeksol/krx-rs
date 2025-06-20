@@ -61,7 +61,7 @@ impl<'a> OilDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::general::OilDailyRecord>>(
                 "/gen/oil_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -100,7 +100,7 @@ impl<'a> GoldDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::general::GoldDailyRecord>>(
                 "/gen/gold_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -139,7 +139,7 @@ impl<'a> EmissionsDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::general::EmissionsDailyRecord>>(
                 "/gen/ets_bydd_trd",
                 &[("basDd", &base_date)],
             )

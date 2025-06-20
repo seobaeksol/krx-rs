@@ -76,7 +76,7 @@ impl<'a> FuturesDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::FuturesDailyRecord>>(
                 "/drv/fut_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -115,7 +115,7 @@ impl<'a> EquityStockFuturesDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::EquityStockFuturesDailyRecord>>(
                 "/drv/eqsfu_stk_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -154,7 +154,7 @@ impl<'a> EquityKosdaqFuturesDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::EquityKosdaqFuturesDailyRecord>>(
                 "/drv/eqkfu_ksq_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -193,7 +193,7 @@ impl<'a> OptionsDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::OptionsDailyRecord>>(
                 "/drv/opt_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -232,7 +232,7 @@ impl<'a> EquityStockOptionsDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::EquityStockOptionsDailyRecord>>(
                 "/drv/eqsop_bydd_trd",
                 &[("basDd", &base_date)],
             )
@@ -271,7 +271,7 @@ impl<'a> EquityKosdaqOptionsDailyBuilder<'a> {
         let base_date = validate_base_date(self.base_date)?;
 
         let response = self.client
-            .get(
+            .get::<crate::data::ApiResponse<crate::data::derivative::EquityKosdaqOptionsDailyRecord>>(
                 "/drv/eqkop_bydd_trd",
                 &[("basDd", &base_date)],
             )
