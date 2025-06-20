@@ -1,0 +1,54 @@
+version: 2
+
+updates:
+  # Enable version updates for Cargo
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    # Group all patch updates together
+    groups:
+      patch-updates:
+        applies-to: version-updates
+        update-types:
+          - "patch"
+    # Allow up to 10 open pull requests
+    open-pull-requests-limit: 10
+    # Reviewers to automatically assign
+    reviewers:
+      - "seobaeksol"
+    # Labels to add to pull requests
+    labels:
+      - "dependencies"
+      - "rust"
+    # Commit message preferences
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    # Ignore specific updates if needed
+    ignore:
+      # Ignore major version updates for now
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Seoul"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "seobaeksol"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

@@ -1,0 +1,90 @@
+name: ❓ Question
+description: 사용법이나 기타 질문이 있으시면 여기에 남겨주세요
+title: "[QUESTION] "
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        질문해주셔서 감사합니다! 빠르고 정확한 답변을 드릴 수 있도록 아래 정보를 제공해주세요.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: ❓ 질문 내용
+      description: 어떤 것이 궁금하신가요?
+      placeholder: 질문을 명확하고 구체적으로 작성해주세요.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: 📋 질문 유형
+      description: 질문의 유형을 선택해주세요.
+      options:
+        - 사용법 (How to use)
+        - API 설명 (API explanation)
+        - 설정 (Configuration)
+        - 오류 해결 (Troubleshooting)
+        - 성능 (Performance)
+        - 기타 (Other)
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 🔍 상황 설명
+      description: 질문과 관련된 상황이나 배경을 설명해주세요.
+      placeholder: |
+        - 무엇을 하려고 하시나요?
+        - 어떤 문제를 해결하려고 하시나요?
+        - 어떤 결과를 기대하시나요?
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: 💻 관련 코드
+      description: 질문과 관련된 코드가 있으면 공유해주세요.
+      render: rust
+      placeholder: |
+        // 현재 사용하고 있는 코드나 시도해본 코드
+        use krx_rs::Client;
+        
+        let client = Client::new("auth_key");
+        // ...
+
+  - type: textarea
+    id: attempted-solutions
+    attributes:
+      label: 🔧 시도해본 방법
+      description: 이미 시도해본 방법이나 찾아본 자료가 있나요?
+      placeholder: |
+        - 문서에서 찾아본 내용
+        - 시도해본 코드나 설정
+        - 참고한 예제나 자료
+
+  - type: input
+    id: version
+    attributes:
+      label: 📦 krx-rs 버전
+      description: 사용 중인 krx-rs 버전을 알려주세요.
+      placeholder: "예: 0.1.0"
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🌍 환경 정보
+      description: 필요한 경우 환경 정보를 제공해주세요.
+      placeholder: |
+        - OS: [예: Windows 11, macOS 14.0, Ubuntu 22.04]
+        - Rust 버전: [예: 1.75.0]
+        - 기타 관련 정보
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📋 추가 정보
+      description: 질문과 관련된 추가 정보가 있으면 제공해주세요.
+      placeholder: 스크린샷, 로그, 또는 기타 도움이 될 만한 정보를 공유해주세요.

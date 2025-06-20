@@ -1,0 +1,96 @@
+name: ✨ Feature Request
+description: 새로운 기능이나 개선사항을 제안해주세요
+title: "[FEATURE] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능을 제안해주셔서 감사합니다! 아이디어를 구체화할 수 있도록 아래 정보를 제공해주세요.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 🎯 기능 설명
+      description: 어떤 기능을 원하시나요?
+      placeholder: 원하는 기능에 대해 명확하고 간결하게 설명해주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 💡 동기
+      description: 왜 이 기능이 필요한가요?
+      placeholder: |
+        이 기능이 해결하고자 하는 문제나 사용 사례를 설명해주세요.
+        예: "현재 XXX를 하기 위해서는 YYY를 해야 하는데, 이는 불편합니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: detailed-description
+    attributes:
+      label: 📋 상세 설명
+      description: 기능이 어떻게 작동해야 하는지 상세히 설명해주세요.
+      placeholder: |
+        - 예상되는 API 인터페이스
+        - 동작 방식
+        - 관련 옵션이나 설정
+        - 기타 세부사항
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: 💻 코드 예제
+      description: 제안하는 기능을 사용하는 코드 예제를 작성해주세요.
+      render: rust
+      placeholder: |
+        // 이런 식으로 사용할 수 있으면 좋겠습니다
+        use krx_rs::Client;
+        
+        let client = Client::new("auth_key");
+        let result = client.new_feature().some_method().await?;
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 대안
+      description: 고려해본 다른 방법이나 대안이 있나요?
+      placeholder: |
+        현재 이 문제를 해결하기 위해 사용하고 있는 방법이나
+        고려해본 다른 접근 방식이 있으면 설명해주세요.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📊 우선순위
+      description: 이 기능의 중요도를 선택해주세요.
+      options:
+        - Low (낮음) - 있으면 좋겠지만 급하지 않음
+        - Medium (보통) - 유용하지만 대안이 있음
+        - High (높음) - 중요하고 필요함
+        - Critical (긴급) - 필수적이고 시급함
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 기여 의사
+      description: 이 기능 구현에 기여하실 의사가 있나요?
+      options:
+        - label: 이 기능을 직접 구현하고 싶습니다
+        - label: 구현에 도움을 주고 싶습니다
+        - label: 테스트를 도와드릴 수 있습니다
+        - label: 문서화를 도와드릴 수 있습니다
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 추가 정보
+      description: 기능과 관련된 추가 정보가 있으면 제공해주세요.
+      placeholder: |
+        - 관련 문서나 링크
+        - 스크린샷이나 다이어그램
+        - 기타 참고사항
