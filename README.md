@@ -151,7 +151,6 @@ let filtered = df.lazy()
 
 - `simple_fetch.rs` - 기본 데이터 조회
 - `with_logging.rs` - 로깅 설정 예제
-- `type_conversion_test.rs` - 타입 변환 예제
 
 ## API 문서
 
