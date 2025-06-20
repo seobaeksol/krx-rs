@@ -1,7 +1,7 @@
 use crate::{
     api::common::{today_string, validate_base_date},
     client::Client,
-    data::general::*,
+    data::{ApiResponse, general::*},
     error::Result,
 };
 use polars::prelude::DataFrame;
@@ -142,10 +142,7 @@ impl<'a> EmissionsDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::general::EmissionsDailyRecord>>(
-                "/gen/ets_bydd_trd",
-                &[("basDd", &base_date)],
-            )
+            .get::<ApiResponse<EmissionsDailyRecord>>("/gen/ets_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_emissions_daily(response)

@@ -1,7 +1,7 @@
 use crate::{
     api::common::{today_string, validate_base_date},
     client::Client,
-    data::index::*,
+    data::{ApiResponse, index::*},
     error::Result,
 };
 use polars::prelude::DataFrame;
@@ -75,10 +75,7 @@ impl<'a> KrxIndexDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::index::KrxIndexDailyRecord>>(
-                "/idx/krx_dd_trd",
-                &[("basDd", &base_date)],
-            )
+            .get::<ApiResponse<KrxIndexDailyRecord>>("/idx/krx_dd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_krx_index_daily(response)
@@ -115,7 +112,7 @@ impl<'a> KospiIndexDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::index::KospiIndexDailyRecord>>(
+            .get::<ApiResponse<KospiIndexDailyRecord>>(
                 "/idx/kospi_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -155,7 +152,7 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::index::KosdaqIndexDailyRecord>>(
+            .get::<ApiResponse<KosdaqIndexDailyRecord>>(
                 "/idx/kosdaq_dd_trd",
                 &[("basDd", &base_date)],
             )
@@ -195,10 +192,7 @@ impl<'a> BondIndexDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::index::BondIndexDailyRecord>>(
-                "/idx/bon_dd_trd",
-                &[("basDd", &base_date)],
-            )
+            .get::<ApiResponse<BondIndexDailyRecord>>("/idx/bon_dd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_bond_index_daily(response)
@@ -235,7 +229,7 @@ impl<'a> DerivativeIndexDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<crate::data::index::DerivativeIndexDailyRecord>>(
+            .get::<ApiResponse<DerivativeIndexDailyRecord>>(
                 "/idx/drvprod_dd_trd",
                 &[("basDd", &base_date)],
             )
