@@ -1,5 +1,5 @@
-use chrono::Local;
-use krx_rs::api::common::{is_valid_date_format, today_string, validate_base_date};
+use chrono::{Duration, Local};
+use krx_rs::api::common::{is_valid_date_format, latest_workday_string, validate_base_date};
 use krx_rs::error::Error;
 
 #[test]
@@ -36,7 +36,7 @@ fn test_validate_base_date_none() {
     assert!(result.is_err());
 
     if let Err(Error::InvalidInput(msg)) = result {
-        assert_eq!(msg, "date is required");
+        assert_eq!(msg, "date is required, call `date()` or `latest()`");
     } else {
         panic!("Expected InvalidInput error");
     }
@@ -66,36 +66,21 @@ fn test_validate_base_date_invalid_format() {
 }
 
 #[test]
-fn test_today_string() {
-    let today = today_string();
+fn test_latest_workday_string() {
+    let latest_day = latest_workday_string();
 
     // 길이가 8이어야 함 (YYYYMMDD)
-    assert_eq!(today.len(), 8);
+    assert_eq!(latest_day.len(), 8);
 
     // 모든 문자가 숫자여야 함
-    assert!(today.chars().all(|c| c.is_numeric()));
+    assert!(latest_day.chars().all(|c| c.is_numeric()));
 
-    // 실제 오늘 날짜와 일치하는지 확인
-    let expected = Local::now().format("%Y%m%d").to_string();
-    assert_eq!(today, expected);
+    // 실제 어제 날짜와 일치하는지 확인
+    let expected = (Local::now() - Duration::days(1))
+        .format("%Y%m%d")
+        .to_string();
+    assert_eq!(latest_day, expected);
 
     // 날짜 형식 검증 통과해야 함
-    assert!(is_valid_date_format(&today));
-}
-
-#[test]
-fn test_today_string_format() {
-    let today = today_string();
-
-    // YYYY 부분 (연도) 검증
-    let year: i32 = today[0..4].parse().expect("Year should be numeric");
-    assert!(year >= 2024 && year <= 2100);
-
-    // MM 부분 (월) 검증
-    let month: u32 = today[4..6].parse().expect("Month should be numeric");
-    assert!(month >= 1 && month <= 12);
-
-    // DD 부분 (일) 검증
-    let day: u32 = today[6..8].parse().expect("Day should be numeric");
-    assert!(day >= 1 && day <= 31);
+    assert!(is_valid_date_format(&latest_day));
 }

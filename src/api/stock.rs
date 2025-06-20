@@ -1,5 +1,5 @@
 use crate::{
-    api::common::{today_string, validate_base_date},
+    api::common::{latest_workday_string, validate_base_date},
     client::Client,
     data::{ApiResponse, stock::*},
     error::Result,
@@ -72,15 +72,17 @@ impl<'a> KospiDailyBuilder<'a> {
         }
     }
 
-    /// 조회 기준일자 설정 (YYYYMMDD)
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    /// 오늘 날짜로 설정
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -112,13 +114,17 @@ impl<'a> KosdaqDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -149,13 +155,17 @@ impl<'a> KonexDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -186,13 +196,17 @@ impl<'a> StockWarrantDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -226,13 +240,17 @@ impl<'a> StockRightDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -252,19 +270,38 @@ impl<'a> StockRightDailyBuilder<'a> {
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KospiBaseInfoBuilder<'a> {
     client: &'a Client,
+    base_date: Option<String>,
 }
 
 impl<'a> KospiBaseInfoBuilder<'a> {
     fn new(client: &'a Client) -> Self {
-        Self { client }
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
+        self
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
         let response = self
             .client
             .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
                 "/sto/stk_isu_base_info",
-                &[],
+                &[("basDd", &base_date)],
             )
             .await?;
 
@@ -276,19 +313,38 @@ impl<'a> KospiBaseInfoBuilder<'a> {
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KosdaqBaseInfoBuilder<'a> {
     client: &'a Client,
+    base_date: Option<String>,
 }
 
 impl<'a> KosdaqBaseInfoBuilder<'a> {
     fn new(client: &'a Client) -> Self {
-        Self { client }
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
+        self
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
         let response = self
             .client
             .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
                 "/sto/ksq_isu_base_info",
-                &[],
+                &[("basDd", &base_date)],
             )
             .await?;
 
@@ -300,19 +356,38 @@ impl<'a> KosdaqBaseInfoBuilder<'a> {
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KonexBaseInfoBuilder<'a> {
     client: &'a Client,
+    base_date: Option<String>,
 }
 
 impl<'a> KonexBaseInfoBuilder<'a> {
     fn new(client: &'a Client) -> Self {
-        Self { client }
+        Self {
+            client,
+            base_date: None,
+        }
+    }
+
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
+    pub fn date(mut self, date: impl Into<String>) -> Self {
+        self.base_date = Some(date.into());
+        self
+    }
+
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
+        self
     }
 
     pub async fn fetch(self) -> Result<DataFrame> {
+        let base_date = validate_base_date(self.base_date)?;
         let response = self
             .client
             .get::<ApiResponse<crate::data::stock::StockBaseInfoRecord>>(
                 "/sto/knx_isu_base_info",
-                &[],
+                &[("basDd", &base_date)],
             )
             .await?;
 

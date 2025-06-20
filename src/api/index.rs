@@ -1,5 +1,5 @@
 use crate::{
-    api::common::{today_string, validate_base_date},
+    api::common::{latest_workday_string, validate_base_date},
     client::Client,
     data::{ApiResponse, index::*},
     error::Result,
@@ -57,15 +57,17 @@ impl<'a> KrxIndexDailyBuilder<'a> {
         }
     }
 
-    /// 조회 기준일자 설정 (YYYYMMDD)
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    /// 오늘 날짜로 설정
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -97,13 +99,17 @@ impl<'a> KospiIndexDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -137,13 +143,17 @@ impl<'a> KosdaqIndexDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -177,13 +187,17 @@ impl<'a> BondIndexDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 
@@ -214,13 +228,17 @@ impl<'a> DerivativeIndexDailyBuilder<'a> {
         }
     }
 
+    /// 조회 기준일자 설정 (YYYYMMDD).
+    ///
+    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    pub fn today(mut self) -> Self {
-        self.base_date = Some(today_string());
+    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    pub fn latest(mut self) -> Self {
+        self.base_date = Some(latest_workday_string());
         self
     }
 

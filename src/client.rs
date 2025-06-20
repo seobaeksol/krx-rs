@@ -202,6 +202,11 @@ impl Client {
     pub fn esg(&self) -> api::esg::EsgApi {
         api::esg::EsgApi::new(self)
     }
+
+    /// 현재 클라이언트의 기본 URL을 반환합니다. (테스트용)
+    pub fn get_base_url(&self) -> &str {
+        &self.base_url
+    }
 }
 
 /// 클라이언트 빌더
@@ -274,10 +279,12 @@ impl ClientBuilder {
             )
             .build()?;
 
+        let base_url = self.base_url.unwrap_or_else(|| BASE_URL.to_string());
+
         Ok(Client {
             http_client,
             auth_key,
-            base_url: self.base_url.unwrap_or_else(|| BASE_URL.to_string()),
+            base_url,
         })
     }
 }

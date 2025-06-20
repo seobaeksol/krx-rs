@@ -2,6 +2,11 @@
 //!
 //! KRX Open API를 위한 현대적이고 타입 안전한 Rust 클라이언트 라이브러리
 //!
+//! ## 데이터 제공 범위 안내
+//!
+//! **중요**: KRX Open API는 **2010년 이후부터 조회일 기준 전일(T-1)**까지의 데이터만 제공합니다.
+//! 라이브러리를 통해 당일 데이터를 조회할 수 없으니 이용에 참고 부탁드립니다.
+//!
 //! ## 특징
 //!
 //! - **타입 안전성**: Rust의 강력한 타입 시스템 활용
@@ -20,14 +25,24 @@
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!     let client = Client::new("your_auth_key");
 //!     
-//!     let data = client
+//!     // 특정 날짜의 데이터 조회
+//!     let data_by_date = client
 //!         .stock()
 //!         .kospi_daily()
 //!         .date("20240105")
 //!         .fetch()
 //!         .await?;
+//!     println!("20240105 데이터:\\n{}", data_by_date);
+//!
+//!     // 가장 최신(전일) 데이터 조회
+//!     let latest_data = client
+//!         .stock()
+//!         .kospi_daily()
+//!         .latest()
+//!         .fetch()
+//!         .await?;
+//!     println!("가장 최신 데이터:\\n{}", latest_data);
 //!         
-//!     println!("{}", data);
 //!     Ok(())
 //! }
 //! ```
