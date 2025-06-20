@@ -1,69 +1,103 @@
-//! # krx-rs
 //!
-//! KRX Open API를 위한 현대적이고 타입 안전한 Rust 클라이언트 라이브러리
+//! # krx-rs: 한국거래소 Open API Rust 클라이언트
 //!
-//! ## 데이터 제공 범위 안내
+//! **한국거래소(KRX) Open API를 위한 비공식 Rust 라이브러리**
 //!
-//! **중요**: KRX Open API는 **2010년 이후부터 조회일 기준 전일(T-1)**까지의 데이터만 제공합니다.
-//! 라이브러리를 통해 당일 데이터를 조회할 수 없으니 이용에 참고 부탁드립니다.
+//! ---
 //!
-//! ## 특징
+//! ## ✨ 주요 특징
 //!
-//! - **타입 안전성**: Rust의 강력한 타입 시스템 활용
-//! - **비동기 지원**: tokio 기반의 비동기 API
-//! - **빌더 패턴**: 직관적이고 유연한 API 구성
-//! - **데이터 처리**: Polars DataFrame으로 즉시 사용 가능한 데이터 제공
-//! - **명확한 오류 처리**: 상세한 오류 타입과 컨텍스트 제공
-//! - **구조화된 로깅**: tracing을 통한 모니터링 및 디버깅 지원
+//! - **모든 KRX 엔드포인트 지원**: 주식, 지수, 채권, 파생, ETF/ETN, ESG 등
+//! - **비동기(async) 지원**: `tokio` 기반 고성능 HTTP 클라이언트
+//! - **데이터 분석 친화적**: [polars](https://pola-rs.github.io/polars/) DataFrame 반환
+//! - **빌더 패턴**: 직관적이고 안전한 API 체이닝
+//! - **구조화된 로깅**: `tracing` 기반 실무형 로깅
+//! - **명확한 에러 처리**: 상세한 오류 타입 제공
 //!
-//! ## 빠른 시작
+//! ---
 //!
-//! ```rust
+//! ## 🚀 빠른 시작 (Quick Start)
+//!
+//! ```rust,no_run
 //! use krx_rs::Client;
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! async fn main() -> Result<(), krx_rs::error::Error> {
+//!     // KRX 인증키로 클라이언트 생성
 //!     let client = Client::new("your_auth_key");
-//!     
-//!     // 특정 날짜의 데이터 조회
-//!     let data_by_date = client
-//!         .stock()
-//!         .kospi_daily()
-//!         .date("20240105")
-//!         .fetch()
-//!         .await?;
-//!     println!("20240105 데이터:\\n{}", data_by_date);
 //!
-//!     // 가장 최신(전일) 데이터 조회
-//!     let latest_data = client
-//!         .stock()
-//!         .kospi_daily()
-//!         .latest()
-//!         .fetch()
-//!         .await?;
-//!     println!("가장 최신 데이터:\\n{}", latest_data);
-//!         
+//!     // KOSPI 일별 시세 조회 (특정일)
+//!     let df = client.stock().kospi_daily().date("20240105").fetch().await?;
+//!     println!("{}", df);
 //!     Ok(())
 //! }
 //! ```
 //!
-//! ## 로깅 설정
+//! ---
 //!
-//! ```rust
+//! ## ⚡ 고급 사용법 (Advanced)
+//!
+//! ```rust,no_run
 //! use krx_rs::{Client, logging::LoggingConfig};
+//! use std::time::Duration;
 //!
-//! let logging_config = LoggingConfig {
-//!     level: "debug".to_string(),
-//!     json_format: false,
-//!     filter_sensitive: true,
-//!     file_path: None,
-//! };
-//!
-//! let client = Client::builder()
-//!     .auth_key("your_auth_key")
-//!     .logging(logging_config)
-//!     .build()?;
+//! #[tokio::main]
+//! async fn main() -> Result<(), krx_rs::error::Error> {
+//!     let logging_config = LoggingConfig {
+//!         level: "debug".to_string(),
+//!         json_format: false,
+//!         filter_sensitive: true,
+//!         file_path: None,
+//!     };
+//!     let client = Client::builder()
+//!         .auth_key("your_auth_key")
+//!         .timeout(Duration::from_secs(30))
+//!         .user_agent("my-krx-app/1.0")
+//!         .logging(logging_config)
+//!         .build()?;
+//!     let df = client.stock().kosdaq_daily().latest().fetch().await?;
+//!     println!("{}", df);
+//!     Ok(())
+//! }
 //! ```
+//!
+//! ---
+//!
+//! ## 📅 지원 데이터 범위
+//!
+//! | 구분         | 범위                        |
+//! |--------------|-----------------------------|
+//! | 지원 기간    | 2010년 ~ 전일(T-1)           |
+//! | 실시간 데이터| ❌ 미지원 (최신: 전일 종가)   |
+//! | 인증키 필요  | ✅ (KRX Open API 회원가입)    |
+//!
+//! > **중요:** 모든 엔드포인트는 `.date()` 또는 `.latest()`로 기준일자를 반드시 지정해야 합니다.
+//!
+//! ---
+//!
+//! ## 🗂️ 지원 엔드포인트 및 하위 기능 (계층 구조)
+//!
+//! | Client 메서드         | 하위 기능(Builder/메서드)                       | 설명                                 |
+//! |----------------------|-----------------------------------------------|--------------------------------------|
+//! | `client.stock()`     | `kospi_daily()`, `kosdaq_daily()`, `konex_daily()`,<br>`stock_warrant_daily()`, `stock_right_daily()`,<br>`kospi_base_info()`, `kosdaq_base_info()`, `konex_base_info()` | 주식(일별시세, 기본정보 등)           |
+//! | `client.index()`     | `krx_daily()`, `kospi_daily()`, `kosdaq_daily()`,<br>`bond_daily()`, `derivative_daily()` | 주가지수(KRX, KOSPI, KOSDAQ 등)       |
+//! | `client.bond()`      | `kts_daily()`, `bond_daily()`, `small_bond_daily()` | 채권(국고채, 일반채권, 소액채권 등)    |
+//! | `client.etp()`       | `etf_daily()`, `etn_daily()`, `elw_daily()`        | ETP (ETF, ETN, ELW)                   |
+//! | `client.derivative()`| `futures_daily()`, `equity_stock_futures_daily()`,<br>`equity_kosdaq_futures_daily()`,<br>`options_daily()`, `equity_stock_options_daily()`,<br>`equity_kosdaq_options_daily()` | 파생상품(선물, 옵션 등)               |
+//! | `client.general()`   | `oil_daily()`, `gold_daily()`, `emissions_daily()`  | 일반상품(유가, 금, 배출권 등)          |
+//! | `client.esg()`       | `sri_bond_info()`                                 | ESG/사회책임투자채권                  |
+//!
+//! ---
+//!
+//! ## 🔗 참고 자료
+//!
+//! - [KRX 정보데이터시스템(Open API)](https://data.krx.co.kr/)
+//! - [공식 GitHub 저장소](https://github.com/finfra/krx-rs)
+//! - [docs.rs 문서](https://docs.rs/krx-rs)
+//!
+//! ---
+//!
+//! _문의/기여/이슈는 GitHub에서 환영합니다!_
 
 pub mod api;
 pub mod client;

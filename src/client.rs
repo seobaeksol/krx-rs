@@ -29,6 +29,7 @@ impl Client {
     ///
     /// # Example
     /// ```
+    /// use krx_rs::Client;
     /// let client = Client::new("your_auth_key");
     /// ```
     pub fn new(auth_key: impl Into<String>) -> Self {

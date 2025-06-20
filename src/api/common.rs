@@ -1,12 +1,16 @@
 use crate::error::{Error, Result};
 use chrono::{Duration, Local};
 
-/// 날짜 형식 검증 (YYYYMMDD)
+/// 날짜 문자열이 "YYYYMMDD" 형식인지 검증합니다.
 pub fn is_valid_date_format(date: &str) -> bool {
     date.len() == 8 && date.chars().all(|c| c.is_numeric())
 }
 
-/// 기준일자 파라미터 검증 및 변환
+/// `Option<String>` 형태의 날짜를 검증하고, 유효하면 `String`을 반환합니다.
+///
+/// # Errors
+/// - 날짜가 `None`일 경우 `Error::InvalidInput` 반환.
+/// - 날짜 형식이 유효하지 않을 경우 `Error::InvalidInput` 반환.
 pub fn validate_base_date(base_date: Option<String>) -> Result<String> {
     let date = base_date.ok_or_else(|| {
         Error::InvalidInput("date is required, call `date()` or `latest()`".to_string())
@@ -21,6 +25,7 @@ pub fn validate_base_date(base_date: Option<String>) -> Result<String> {
     Ok(date)
 }
 
+/// KRX API 조회를 위한 가장 최신 거래일(보통 전일)의 날짜 문자열을 생성합니다.
 pub fn latest_workday_string() -> String {
     let yesterday = Local::now() - Duration::days(1);
     yesterday.format("%Y%m%d").to_string()

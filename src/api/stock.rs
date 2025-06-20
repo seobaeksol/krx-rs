@@ -6,9 +6,29 @@ use crate::{
 };
 use polars::prelude::DataFrame;
 
-/// 주식 관련 API 엔드포인트
+/// 주식(Stock) 관련 API 엔드포인트를 제공합니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 주식 API 접근
+/// let stock_api = client.stock();
+///
+/// // KOSPI 일별 시세 조회
+/// let kospi_daily = stock_api.kospi_daily().date("20240105").fetch().await?;
+/// println!("KOSPI Daily: {}", kospi_daily);
+///
+/// // KOSDAQ 종목 기본 정보 조회
+/// let kosdaq_info = stock_api.kosdaq_base_info().latest().fetch().await?;
+/// println!("KOSDAQ Info: {}", kosdaq_info);
+/// # Ok(())
+/// # }
+/// ```
 pub struct StockApi<'a> {
-    client: &'a Client,
+    pub(crate) client: &'a Client,
 }
 
 impl<'a> StockApi<'a> {
@@ -16,48 +36,81 @@ impl<'a> StockApi<'a> {
         Self { client }
     }
 
-    /// 유가증권 일별매매정보 조회
+    /// 유가증권(KOSPI) 전종목 일별 시세.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020101)
     pub fn kospi_daily(&self) -> KospiDailyBuilder<'a> {
         KospiDailyBuilder::new(self.client)
     }
 
-    /// 코스닥 일별매매정보 조회
+    /// 코스닥(KOSDAQ) 전종목 일별 시세.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020201)
     pub fn kosdaq_daily(&self) -> KosdaqDailyBuilder<'a> {
         KosdaqDailyBuilder::new(self.client)
     }
 
-    /// 코넥스 일별매매정보 조회
+    /// 코넥스(KONEX) 전종목 일별 시세.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020301)
     pub fn konex_daily(&self) -> KonexDailyBuilder<'a> {
         KonexDailyBuilder::new(self.client)
     }
 
-    /// 신주인수권증권 일별매매정보 조회
+    /// 신주인수권증권 전종목 일별 시세.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020401)
     pub fn stock_warrant_daily(&self) -> StockWarrantDailyBuilder<'a> {
         StockWarrantDailyBuilder::new(self.client)
     }
 
-    /// 신주인수권증서 일별매매정보 조회
+    /// 신주인수권증서 전종목 일별 시세.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020501)
     pub fn stock_right_daily(&self) -> StockRightDailyBuilder<'a> {
         StockRightDailyBuilder::new(self.client)
     }
 
-    /// 유가증권 종목기본정보 조회
+    /// 유가증권(KOSPI) 종목 기본정보.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020601)
     pub fn kospi_base_info(&self) -> KospiBaseInfoBuilder<'a> {
         KospiBaseInfoBuilder::new(self.client)
     }
 
-    /// 코스닥 종목기본정보 조회
+    /// 코스닥(KOSDAQ) 종목 기본정보.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020701)
     pub fn kosdaq_base_info(&self) -> KosdaqBaseInfoBuilder<'a> {
         KosdaqBaseInfoBuilder::new(self.client)
     }
 
-    /// 코넥스 종목기본정보 조회
+    /// 코넥스(KONEX) 종목 기본정보.
+    ///
+    /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020801)
     pub fn konex_base_info(&self) -> KonexBaseInfoBuilder<'a> {
         KonexBaseInfoBuilder::new(self.client)
     }
 }
 
-/// 유가증권 일별매매정보 빌더
+/// 유가증권(KOSPI) 전종목 일별 시세를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().kospi_daily().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신(전일) 데이터 조회
+/// let df_latest = client.stock().kospi_daily().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KospiDailyBuilder<'a> {
     client: &'a Client,
@@ -72,21 +125,34 @@ impl<'a> KospiDailyBuilder<'a> {
         }
     }
 
-    /// 조회 기준일자 설정 (YYYYMMDD).
+    /// 조회 기준일자를 설정합니다. (YYYYMMDD 형식)
     ///
-    /// KRX 데이터는 2010년 이후부터 조회일 기준 전일까지만 제공됩니다.
+    /// # Panics
+    ///
+    /// 잘못된 날짜 형식은 `fetch()` 시점에서 `Error::InvalidInput`을 반환합니다.
     pub fn date(mut self, date: impl Into<String>) -> Self {
         self.base_date = Some(date.into());
         self
     }
 
-    /// 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+    /// 가장 최신 거래일(보통 전일)의 데이터로 기준일자를 설정합니다.
     pub fn latest(mut self) -> Self {
         self.base_date = Some(latest_workday_string());
         self
     }
 
-    /// API 호출 및 데이터 조회
+    /// 설정된 파라미터로 API를 호출하여 데이터를 가져옵니다.
+    ///
+    /// # Returns
+    ///
+    /// Polars DataFrame 형태의 결과 데이터를 반환합니다.
+    ///
+    /// # Errors
+    ///
+    /// - `Error::InvalidInput`: 날짜가 지정되지 않았거나 형식이 잘못된 경우
+    /// - `Error::ApiError`: KRX API 서버에서 오류를 반환한 경우
+    /// - `Error::Network`: 네트워크 요청 실패 시
+    /// - `Error::Parsing`: 응답 데이터 파싱 실패 시
     pub async fn fetch(self) -> Result<DataFrame> {
         let base_date = validate_base_date(self.base_date)?;
 
@@ -99,7 +165,24 @@ impl<'a> KospiDailyBuilder<'a> {
     }
 }
 
-/// 코스닥 일별매매정보 빌더 (기본 구조)
+/// 코스닥(KOSDAQ) 전종목 일별 시세를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().kosdaq_daily().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().kosdaq_daily().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KosdaqDailyBuilder<'a> {
     client: &'a Client,
@@ -140,7 +223,24 @@ impl<'a> KosdaqDailyBuilder<'a> {
     }
 }
 
-/// 코넥스 일별매매정보 빌더 (기본 구조)
+/// 코넥스(KONEX) 전종목 일별 시세를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().konex_daily().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().konex_daily().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KonexDailyBuilder<'a> {
     client: &'a Client,
@@ -181,7 +281,24 @@ impl<'a> KonexDailyBuilder<'a> {
     }
 }
 
-/// 신주인수권증권 일별매매정보 빌더
+/// 신주인수권증권 전종목 일별 시세를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().stock_warrant_daily().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().stock_warrant_daily().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct StockWarrantDailyBuilder<'a> {
     client: &'a Client,
@@ -225,7 +342,24 @@ impl<'a> StockWarrantDailyBuilder<'a> {
     }
 }
 
-/// 신주인수권증서 일별매매정보 빌더
+/// 신주인수권증서 전종목 일별 시세를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().stock_right_daily().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().stock_right_daily().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct StockRightDailyBuilder<'a> {
     client: &'a Client,
@@ -266,7 +400,24 @@ impl<'a> StockRightDailyBuilder<'a> {
     }
 }
 
-/// 유가증권 종목기본정보 빌더
+/// 유가증권(KOSPI) 종목 기본정보를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().kospi_base_info().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().kospi_base_info().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KospiBaseInfoBuilder<'a> {
     client: &'a Client,
@@ -309,7 +460,24 @@ impl<'a> KospiBaseInfoBuilder<'a> {
     }
 }
 
-/// 코스닥 종목기본정보 빌더
+/// 코스닥(KOSDAQ) 종목 기본정보를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().kosdaq_base_info().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().kosdaq_base_info().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KosdaqBaseInfoBuilder<'a> {
     client: &'a Client,
@@ -352,7 +520,24 @@ impl<'a> KosdaqBaseInfoBuilder<'a> {
     }
 }
 
-/// 코넥스 종목기본정보 빌더
+/// 코넥스(KONEX) 종목 기본정보를 조회하는 빌더입니다.
+///
+/// # 예시
+/// ```rust,no_run
+/// # use krx_rs::Client;
+/// # #[tokio::main]
+/// # async fn main() -> Result<(), krx_rs::error::Error> {
+/// # let client = Client::new("YOUR_AUTH_KEY");
+/// // 2024년 1월 5일 기준 데이터 조회
+/// let df_by_date = client.stock().konex_base_info().date("20240105").fetch().await?;
+/// println!("{}", df_by_date);
+///
+/// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
+/// let df_latest = client.stock().konex_base_info().latest().fetch().await?;
+/// println!("{}", df_latest);
+/// # Ok(())
+/// # }
+/// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
 pub struct KonexBaseInfoBuilder<'a> {
     client: &'a Client,
