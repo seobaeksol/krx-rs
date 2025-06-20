@@ -1,7 +1,7 @@
 use crate::{
     client::Client, 
     data::etp::*, 
-    error::{Error, Result},
+    error::Result,
     api::common::{validate_base_date, today_string}
 };
 use polars::prelude::DataFrame;

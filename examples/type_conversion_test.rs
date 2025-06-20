@@ -1,4 +1,4 @@
-use krx_rs::{Client, LoggingConfig, Error};
+use krx_rs::{Client, LoggingConfig};
 use tracing::info;
 use std::fs;
 

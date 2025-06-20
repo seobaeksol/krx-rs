@@ -1,6 +1,5 @@
-use tracing::{info, warn, error, debug, trace};
+use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
-use std::env;
 
 /// 로깅 설정 구조체
 #[derive(Debug, Clone)]

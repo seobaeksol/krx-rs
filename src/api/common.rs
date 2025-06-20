@@ -7,15 +7,14 @@ pub fn is_valid_date_format(date: &str) -> bool {
 
 /// 기준일자 파라미터 검증 및 변환
 pub fn validate_base_date(base_date: Option<String>) -> Result<String> {
-    let date = base_date
-        .ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
-    
+    let date = base_date.ok_or_else(|| Error::InvalidInput("date is required".to_string()))?;
+
     if !is_valid_date_format(&date) {
         return Err(Error::InvalidInput(
-            "date must be in YYYYMMDD format".to_string()
+            "date must be in YYYYMMDD format".to_string(),
         ));
     }
-    
+
     Ok(date)
 }
 
@@ -43,7 +42,7 @@ macro_rules! impl_date_builder_methods {
 
             /// 오늘 날짜로 설정
             pub fn today(mut self) -> Self {
-                self.base_date = Some(crate::api::common::today_string());
+                self.base_date = Some($crate::api::common::today_string());
                 self
             }
         }

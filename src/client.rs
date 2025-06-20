@@ -2,7 +2,7 @@ use crate::{api, error::{Error, Result}, logging::LoggingConfig};
 use reqwest::{Client as HttpClient, header::{HeaderMap, HeaderValue}};
 use serde::de::DeserializeOwned;
 use std::time::Duration;
-use tracing::{info, warn, error, debug, trace, instrument};
+use tracing::{info, warn, error, debug, instrument};
 
 const BASE_URL: &str = "http://data-dbg.krx.co.kr/svc/apis";
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(30);

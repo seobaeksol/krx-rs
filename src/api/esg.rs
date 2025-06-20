@@ -1,7 +1,7 @@
 use crate::{
     client::Client, 
     data::esg::*, 
-    error::{Error, Result}
+    error::Result
 };
 use polars::prelude::DataFrame;
 

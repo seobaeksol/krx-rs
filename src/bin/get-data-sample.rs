@@ -3,7 +3,6 @@ use reqwest::blocking::Client;
 use reqwest::header::{CONTENT_TYPE, HeaderMap, HeaderValue};
 use serde_json::Value;
 use std::fs;
-use std::path::Path;
 
 /// KRX API 샘플 데이터 요청기 (여러 endpoint 지원)
 #[derive(Parser, Debug)]
