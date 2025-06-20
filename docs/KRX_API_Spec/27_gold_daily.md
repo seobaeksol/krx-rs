@@ -43,17 +43,30 @@ curl -X GET "http://data-dbg.krx.co.kr/svc/apis/gen/gold_bydd_trd?basDd=20240105
 {
   "OutBlock_1": [
     {
-      "BAS_DD": "2024/01/05",
-      "ISU_CD": "KRG001",
-      "ISU_NM": "금 1kg",
-      "TDD_CLSPRC": "85250000",
-      "CMPPREVDD_PRC": "520000",
-      "FLUC_RT": "0.61",
-      "TDD_OPNPRC": "84800000",
-      "TDD_HGPRC": "85350000",
-      "TDD_LWPRC": "84750000",
-      "ACC_TRDVOL": "152",
-      "ACC_TRDVAL": "12958000000"
+      "ACC_TRDVAL": "3478633580",
+      "ACC_TRDVOL": "40237",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "380",
+      "FLUC_RT": "0.44",
+      "ISU_CD": "04020000",
+      "ISU_NM": "금 99.99_1Kg",
+      "TDD_CLSPRC": "86680",
+      "TDD_HGPRC": "86710",
+      "TDD_LWPRC": "86300",
+      "TDD_OPNPRC": "86300"
+    },
+    {
+      "ACC_TRDVAL": "245725740",
+      "ACC_TRDVOL": "2848",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "490",
+      "FLUC_RT": "0.57",
+      "ISU_CD": "04020100",
+      "ISU_NM": "미니금 99.99_100g",
+      "TDD_CLSPRC": "86520",
+      "TDD_HGPRC": "86520",
+      "TDD_LWPRC": "86180",
+      "TDD_OPNPRC": "86200"
     }
   ]
 }

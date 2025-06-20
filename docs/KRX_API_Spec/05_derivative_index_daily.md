@@ -37,26 +37,37 @@
 {
   "OutBlock_1": [
     {
-      "BAS_DD": "__",
-      "IDX_CLSS": "__",
-      "IDX_NM": "__",
-      "CLSPRC_IDX": "-",
-      "CMPPREVDD_IDX": "-",
-      "FLUC_RT": "-",
-      "OPNPRC_IDX": "-",
-      "HGPRC_IDX": "-",
-      "LWPRC_IDX": "-"
+      "BAS_DD": "20240105",
+      "CLSPRC_IDX": "1407.82",
+      "CMPPREVDD_IDX": "9.19",
+      "FLUC_RT": "0.66",
+      "HGPRC_IDX": "1407.82",
+      "IDX_CLSS": "선물지수",
+      "IDX_NM": "미국달러선물지수",
+      "LWPRC_IDX": "1400.87",
+      "OPNPRC_IDX": "1403.01"
     },
     {
-      "BAS_DD": "__",
-      "IDX_CLSS": "__",
-      "IDX_NM": "__",
-      "CLSPRC_IDX": "-",
-      "CMPPREVDD_IDX": "-",
-      "FLUC_RT": "-",
-      "OPNPRC_IDX": "-",
-      "HGPRC_IDX": "-",
-      "LWPRC_IDX": "-"
+      "BAS_DD": "20240105",
+      "CLSPRC_IDX": "501.57",
+      "CMPPREVDD_IDX": "-3.10",
+      "FLUC_RT": "-0.61",
+      "HGPRC_IDX": "503.01",
+      "IDX_CLSS": "선물지수",
+      "IDX_NM": "엔선물지수",
+      "LWPRC_IDX": "501.30",
+      "OPNPRC_IDX": "502.13"
+    },
+    {
+      "BAS_DD": "20240105",
+      "CLSPRC_IDX": "846.32",
+      "CMPPREVDD_IDX": "2.35",
+      "FLUC_RT": "0.28",
+      "HGPRC_IDX": "848.38",
+      "IDX_CLSS": "선물지수",
+      "IDX_NM": "유로선물지수",
+      "LWPRC_IDX": "842.97",
+      "OPNPRC_IDX": "842.97"
     }
   ]
 }

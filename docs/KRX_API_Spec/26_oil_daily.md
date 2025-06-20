@@ -38,20 +38,28 @@ curl -X GET "http://data-dbg.krx.co.kr/svc/apis/gen/oil_bydd_trd?basDd=20240105"
 {
   "OutBlock_1": [
     {
-      "BAS_DD": "2024/01/05",
-      "OIL_NM": "경유",
-      "WT_AVG_PRC": "1485.23",
-      "WT_DIS_AVG_PRC": "1482.15",
-      "ACC_TRDVOL": "125000",
-      "ACC_TRDVAL": "185653750000"
+      "ACC_TRDVAL": "11175754363",
+      "ACC_TRDVOL": "7746580",
+      "BAS_DD": "20240105",
+      "OIL_NM": "휘발유",
+      "WT_AVG_PRC": "1430.00",
+      "WT_DIS_AVG_PRC": "1443.93"
     },
     {
-      "BAS_DD": "2024/01/05",
-      "OIL_NM": "휘발유",
-      "WT_AVG_PRC": "1612.45",
-      "WT_DIS_AVG_PRC": "1610.25",
-      "ACC_TRDVOL": "98000",
-      "ACC_TRDVAL": "158020100000"
+      "ACC_TRDVAL": "15593509525",
+      "ACC_TRDVOL": "11699817",
+      "BAS_DD": "20240105",
+      "OIL_NM": "경유",
+      "WT_AVG_PRC": "1315.00",
+      "WT_DIS_AVG_PRC": "1336.04"
+    },
+    {
+      "ACC_TRDVAL": "5472329710",
+      "ACC_TRDVOL": "5286223",
+      "BAS_DD": "20240105",
+      "OIL_NM": "등유",
+      "WT_AVG_PRC": "1030.00",
+      "WT_DIS_AVG_PRC": "1035.63"
     }
   ]
 }

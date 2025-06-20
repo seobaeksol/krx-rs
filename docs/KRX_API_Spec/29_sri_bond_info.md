@@ -44,32 +44,46 @@ curl -X GET "http://data-dbg.krx.co.kr/svc/apis/esg/sri_bond_info?basDd=20240105
 {
   "OutBlock_1": [
     {
-      "BAS_DD": "2024/01/05",
-      "ISUR_NM": "한국전력공사",
-      "ISU_CD": "KR6015722AC7",
-      "SRI_BND_TP_NM": "녹색채권",
-      "ISU_NM": "한국전력1094",
-      "LIST_DD": "2022/12/15",
-      "ISU_DD": "2022/12/14",
-      "REDMPT_DD": "2027/12/14",
-      "ISU_RT": "4.25",
-      "ISU_AMT": "300000000000",
-      "LIST_AMT": "300000000000",
-      "BND_TP_NM": "회사채"
+      "BAS_DD": "20240105",
+      "BND_TP_NM": "회사채",
+      "ISUR_NM": "신한은행",
+      "ISU_AMT": "400000000000",
+      "ISU_CD": "KR6000011B58",
+      "ISU_DD": "20210506",
+      "ISU_NM": "신한은행25-05-이10갑후(녹)",
+      "ISU_RT": "2.58000",
+      "LIST_AMT": "400000000000",
+      "LIST_DD": "20210507",
+      "REDMPT_DD": "20310506",
+      "SRI_BND_TP_NM": "녹색채권"
     },
     {
-      "BAS_DD": "2024/01/05",
-      "ISUR_NM": "한국수자원공사",
-      "ISU_CD": "KR6380702BA8",
-      "SRI_BND_TP_NM": "사회적채권",
-      "ISU_NM": "한국수자원52",
-      "LIST_DD": "2021/11/09",
-      "ISU_DD": "2021/11/08",
-      "REDMPT_DD": "2026/11/08",
-      "ISU_RT": "2.45",
-      "ISU_AMT": "200000000000",
-      "LIST_AMT": "200000000000",
-      "BND_TP_NM": "특수채"
+      "BAS_DD": "20240105",
+      "BND_TP_NM": "회사채",
+      "ISUR_NM": "신한은행",
+      "ISU_AMT": "260000000000",
+      "ISU_CD": "KR6000012BB1",
+      "ISU_DD": "20211109",
+      "ISU_NM": "신한은행25-11-이10갑후(녹)",
+      "ISU_RT": "2.84000",
+      "LIST_AMT": "260000000000",
+      "LIST_DD": "20211110",
+      "REDMPT_DD": "20311109",
+      "SRI_BND_TP_NM": "녹색채권"
+    },
+    {
+      "BAS_DD": "20240105",
+      "BND_TP_NM": "회사채",
+      "ISUR_NM": "신한은행",
+      "ISU_AMT": "100000000000",
+      "ISU_CD": "KR6000017D84",
+      "ISU_DD": "20230823",
+      "ISU_NM": "신한은행27-08-이-3-A(녹)",
+      "ISU_RT": "4.22000",
+      "LIST_AMT": "100000000000",
+      "LIST_DD": "20230824",
+      "REDMPT_DD": "20260823",
+      "SRI_BND_TP_NM": "녹색채권"
     }
   ]
 }

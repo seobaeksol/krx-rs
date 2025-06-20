@@ -43,30 +43,43 @@ curl -X GET "http://data-dbg.krx.co.kr/svc/apis/gen/ets_bydd_trd?basDd=20240105"
 {
   "OutBlock_1": [
     {
-      "BAS_DD": "2024/01/05",
-      "ISU_CD": "KAU24",
-      "ISU_NM": "KAU24",
-      "TDD_CLSPRC": "23500",
-      "CMPPREVDD_PRC": "-200",
-      "FLUC_RT": "-0.84",
-      "TDD_OPNPRC": "23700",
-      "TDD_HGPRC": "23800",
-      "TDD_LWPRC": "23450",
-      "ACC_TRDVOL": "85420",
-      "ACC_TRDVAL": "2007370000"
+      "ACC_TRDVAL": "4805945740",
+      "ACC_TRDVOL": "581003",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "-410",
+      "FLUC_RT": "-4.61",
+      "ISU_CD": "05003230",
+      "ISU_NM": "KAU23",
+      "TDD_CLSPRC": "8490",
+      "TDD_HGPRC": "8840",
+      "TDD_LWPRC": "8200",
+      "TDD_OPNPRC": "8200"
     },
     {
-      "BAS_DD": "2024/01/05",
-      "ISU_CD": "KCU24",
-      "ISU_NM": "KCU24",
-      "TDD_CLSPRC": "22800",
-      "CMPPREVDD_PRC": "-150",
-      "FLUC_RT": "-0.65",
-      "TDD_OPNPRC": "22950",
-      "TDD_HGPRC": "23000",
-      "TDD_LWPRC": "22750",
-      "ACC_TRDVOL": "42150",
-      "ACC_TRDVAL": "961020000"
+      "ACC_TRDVAL": "0",
+      "ACC_TRDVOL": "0",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "0",
+      "FLUC_RT": "0.00",
+      "ISU_CD": "05003240",
+      "ISU_NM": "KAU24",
+      "TDD_CLSPRC": "8610",
+      "TDD_HGPRC": "0",
+      "TDD_LWPRC": "0",
+      "TDD_OPNPRC": "0"
+    },
+    {
+      "ACC_TRDVAL": "0",
+      "ACC_TRDVOL": "0",
+      "BAS_DD": "20240105",
+      "CMPPREVDD_PRC": "0",
+      "FLUC_RT": "0.00",
+      "ISU_CD": "05003250",
+      "ISU_NM": "KAU25",
+      "TDD_CLSPRC": "8610",
+      "TDD_HGPRC": "0",
+      "TDD_LWPRC": "0",
+      "TDD_OPNPRC": "0"
     }
   ]
 }
