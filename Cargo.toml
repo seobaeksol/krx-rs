@@ -11,6 +11,7 @@ documentation = "https://docs.rs/krx-rs"
 readme = "README.md"
 keywords = ["krx", "korea-exchange", "stock", "finance", "api", "korea"]
 categories = ["api-bindings", "finance"]
+rust-version = "1.87.0"
 
 [dependencies]
 # 비동기 런타임
