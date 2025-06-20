@@ -9,7 +9,7 @@ repository = "https://github.com/seobaeksol/krx-rs"
 homepage = "https://github.com/seobaeksol/krx-rs"
 documentation = "https://docs.rs/krx-rs"
 readme = "README.md"
-keywords = ["krx", "korea-exchange", "stock", "finance", "api", "korea"]
+keywords = ["krx", "korea", "stock", "finance", "api"]
 categories = ["api-bindings", "finance"]
 rust-version = "1.87.0"
 
