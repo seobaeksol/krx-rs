@@ -45,7 +45,7 @@ impl Client {
         logging_config: LoggingConfig,
     ) -> Result<Self> {
         crate::logging::init_logging(&logging_config)
-            .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {}", e)))?;
+            .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {e}")))?;
         Ok(Self::new(auth_key))
     }
 
@@ -126,7 +126,7 @@ impl Client {
                         "Failed to parse response"
                     );
                     Err(Error::Parsing {
-                        details: format!("Failed to deserialize response from {}", endpoint),
+                        details: format!("Failed to deserialize response from {endpoint}"),
                         source: e,
                         response_body: body,
                     })
@@ -170,37 +170,37 @@ impl Client {
     }
 
     /// 주식 API 접근
-    pub fn stock(&self) -> api::stock::StockApi {
+    pub fn stock(&self) -> api::stock::StockApi<'_> {
         api::stock::StockApi::new(self)
     }
 
     /// 지수 API 접근
-    pub fn index(&self) -> api::index::IndexApi {
+    pub fn index(&self) -> api::index::IndexApi<'_> {
         api::index::IndexApi::new(self)
     }
 
     /// 채권 API 접근
-    pub fn bond(&self) -> api::bond::BondApi {
+    pub fn bond(&self) -> api::bond::BondApi<'_> {
         api::bond::BondApi::new(self)
     }
 
     /// ETP API 접근
-    pub fn etp(&self) -> api::etp::EtpApi {
+    pub fn etp(&self) -> api::etp::EtpApi<'_> {
         api::etp::EtpApi::new(self)
     }
 
     /// 파생상품 API 접근
-    pub fn derivative(&self) -> api::derivative::DerivativeApi {
+    pub fn derivative(&self) -> api::derivative::DerivativeApi<'_> {
         api::derivative::DerivativeApi::new(self)
     }
 
     /// 일반상품 API 접근
-    pub fn general(&self) -> api::general::GeneralApi {
+    pub fn general(&self) -> api::general::GeneralApi<'_> {
         api::general::GeneralApi::new(self)
     }
 
     /// ESG API 접근
-    pub fn esg(&self) -> api::esg::EsgApi {
+    pub fn esg(&self) -> api::esg::EsgApi<'_> {
         api::esg::EsgApi::new(self)
     }
 
@@ -257,10 +257,10 @@ impl ClientBuilder {
             .auth_key
             .ok_or_else(|| Error::InvalidInput("auth_key is required".to_string()))?;
 
-        // 로깅 초기화
-        if let Some(config) = &self.logging_config {
-            crate::logging::init_logging(config)
-                .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {}", e)))?;
+        // Initialize logging if a configuration is provided.
+        if let Some(config) = self.logging_config {
+            crate::logging::init_logging(&config)
+                .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {e}")))?;
         }
 
         let mut headers = HeaderMap::new();

@@ -57,7 +57,7 @@ fn test_deserialize_krx_date_success() {
     ];
 
     for (date_str, expected_date) in test_cases {
-        let json = format!(r#"{{"date": "{}"}}"#, date_str);
+        let json = format!(r#"{{"date": "{date_str}"}}"#);
         let result: TestKrxDate = serde_json::from_str(&json).unwrap();
         assert_eq!(result.date, expected_date);
     }
@@ -77,7 +77,7 @@ fn test_deserialize_krx_date_invalid() {
 
     for invalid_json in invalid_dates {
         let result: Result<TestKrxDate, _> = serde_json::from_str(invalid_json);
-        assert!(result.is_err(), "Should fail for: {}", invalid_json);
+        assert!(result.is_err(), "Should fail for: {invalid_json}");
     }
 }
 
@@ -113,7 +113,7 @@ fn test_deserialize_optional_f64_none() {
 
     for json in none_cases {
         let result: TestOptionalF64 = serde_json::from_str(json).unwrap();
-        assert_eq!(result.value, None, "Should be None for: {}", json);
+        assert_eq!(result.value, None, "Should be None for: {json}");
     }
 }
 
@@ -126,7 +126,7 @@ fn test_deserialize_optional_f64_invalid() {
 
     for json in invalid_cases {
         let result: Result<TestOptionalF64, _> = serde_json::from_str(json);
-        assert!(result.is_err(), "Should fail for: {}", json);
+        assert!(result.is_err(), "Should fail for: {json}");
     }
 }
 
@@ -157,7 +157,7 @@ fn test_deserialize_optional_u64_none() {
 
     for json in none_cases {
         let result: TestOptionalU64 = serde_json::from_str(json).unwrap();
-        assert_eq!(result.value, None, "Should be None for: {}", json);
+        assert_eq!(result.value, None, "Should be None for: {json}");
     }
 }
 
@@ -171,7 +171,7 @@ fn test_deserialize_optional_u64_invalid() {
 
     for json in invalid_cases {
         let result: Result<TestOptionalU64, _> = serde_json::from_str(json);
-        assert!(result.is_err(), "Should fail for: {}", json);
+        assert!(result.is_err(), "Should fail for: {json}");
     }
 }
 
@@ -202,7 +202,7 @@ fn test_deserialize_optional_percentage_none() {
 
     for json in none_cases {
         let result: TestOptionalPercentage = serde_json::from_str(json).unwrap();
-        assert_eq!(result.value, None, "Should be None for: {}", json);
+        assert_eq!(result.value, None, "Should be None for: {json}");
     }
 }
 
@@ -247,6 +247,6 @@ fn test_deserialize_u64_invalid() {
 
     for json in invalid_cases {
         let result: Result<TestU64, _> = serde_json::from_str(json);
-        assert!(result.is_err(), "Should fail for: {}", json);
+        assert!(result.is_err(), "Should fail for: {json}");
     }
 }

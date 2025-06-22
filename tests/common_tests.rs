@@ -60,7 +60,7 @@ fn test_validate_base_date_invalid_format() {
         if let Err(Error::InvalidInput(msg)) = result {
             assert_eq!(msg, "date must be in YYYYMMDD format");
         } else {
-            panic!("Expected InvalidInput error for: {}", invalid_date);
+            panic!("Expected InvalidInput error for: {invalid_date}");
         }
     }
 }

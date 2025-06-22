@@ -35,7 +35,7 @@ async fn main() -> Result<(), Error> {
         .collect()?;
 
     println!("\n💰 거래대금 TOP 5:");
-    println!("{}", top_5);
+    println!("{top_5}");
 
     Ok(())
 }

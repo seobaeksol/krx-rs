@@ -159,27 +159,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 headers.insert("Cookie", HeaderValue::from_str(&args.cookie)?);
             }
             let body = serde_json::json!({"basDd": date});
-            println!("[INFO] 요청: {} {}", name, date);
+            println!("[INFO] 요청: {name} {date}");
             let resp = client.post(*url).headers(headers).json(&body).send();
             match resp {
                 Ok(r) => {
                     if !r.status().is_success() {
-                        eprintln!("[ERROR] {} {} HTTP {}", name, date, r.status());
+                        eprintln!("[ERROR] {name} {date} HTTP {}", r.status());
                         continue;
                     }
                     let json: Value = match r.json() {
                         Ok(j) => j,
                         Err(e) => {
-                            eprintln!("[ERROR] {} {} JSON 파싱 실패: {}", name, date, e);
+                            eprintln!("[ERROR] {name} {date} JSON 파싱 실패: {e}");
                             continue;
                         }
                     };
-                    let file_path = format!("samples/{}_{}.json", name, date);
-                    fs::write(&file_path, serde_json::to_string_pretty(&json)?)?;
-                    println!("[OK] {} -> {}", name, file_path);
+                    let file_path = format!("samples/{name}_{date}.json");
+                    if let Ok(json_str) = serde_json::to_string_pretty(&json) {
+                        match std::fs::write(&file_path, json_str) {
+                            Ok(_) => println!("[OK] {name} -> {file_path}"),
+                            Err(e) => eprintln!("[ERROR] 파일 쓰기 실패: {e}"),
+                        }
+                    } else {
+                        eprintln!("[ERROR] {name} {date} JSON 파싱 실패");
+                    }
                 }
                 Err(e) => {
-                    eprintln!("[ERROR] {} {} 요청 실패: {}", name, date, e);
+                    eprintln!("[ERROR] {name} {date} 요청 실패: {e}");
                 }
             }
         }

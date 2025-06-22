@@ -12,8 +12,7 @@ async fn setup_test_client(
 ) -> (Client, MockServer) {
     let mock_server = MockServer::start().await;
     let mock_response = std::fs::read_to_string(format!(
-        "docs/krx-api-reference/KRX_API_Spec/samples/{}",
-        response_file
+        "docs/krx-api-reference/KRX_API_Spec/samples/{response_file}"
     ))
     .unwrap_or_else(|_| "{}".to_string()); // 샘플 파일 없으면 빈 JSON 객체 사용
 
