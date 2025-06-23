@@ -97,7 +97,7 @@ This is a Rust client library for the Korea Exchange (KRX) Open API, designed wi
 All API endpoints follow a consistent builder pattern:
 ```rust
 client.{market}()      // e.g., stock(), bond(), index()
-    .{endpoint}()      // e.g., kospi_daily(), etf_daily()
+    .{endpoint}()      // e.g., stock_daily(), etf_daily()
     .date("YYYYMMDD")  // or .latest() for most recent data
     .fetch()           // async execution
     .await?

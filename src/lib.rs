@@ -27,7 +27,7 @@
 //!     let client = Client::new("your_auth_key");
 //!
 //!     // KOSPI 일별 시세 조회 (특정일)
-//!     let df = client.stock().kospi_daily().date("20240105").fetch().await?;
+//!     let df = client.stock().stock_daily().date("20240105").fetch().await?;
 //!     println!("{}", df);
 //!     Ok(())
 //! }
@@ -79,8 +79,8 @@
 //!
 //! | Client 메서드         | 하위 기능(Builder/메서드)                       | 설명                                 |
 //! |----------------------|-----------------------------------------------|--------------------------------------|
-//! | `client.stock()`     | `kospi_daily()`, `kosdaq_daily()`, `konex_daily()`,<br>`stock_warrant_daily()`, `stock_right_daily()`,<br>`kospi_base_info()`, `kosdaq_base_info()`, `konex_base_info()` | 주식(일별시세, 기본정보 등)           |
-//! | `client.index()`     | `krx_daily()`, `kospi_daily()`, `kosdaq_daily()`,<br>`bond_daily()`, `derivative_daily()` | 주가지수(KRX, KOSPI, KOSDAQ 등)       |
+//! | `client.stock()`     | `stock_daily()`, `kosdaq_daily()`, `konex_daily()`,<br>`stock_warrant_daily()`, `stock_right_daily()`,<br>`stock_base_info()`, `kosdaq_base_info()`, `konex_base_info()` | 주식(일별시세, 기본정보 등)           |
+//! | `client.index()`     | `krx_daily()`, `stock_daily()`, `kosdaq_daily()`,<br>`bond_daily()`, `derivative_daily()` | 주가지수(KRX, KOSPI, KOSDAQ 등)       |
 //! | `client.bond()`      | `kts_daily()`, `bond_daily()`, `small_bond_daily()` | 채권(국고채, 일반채권, 소액채권 등)    |
 //! | `client.etp()`       | `etf_daily()`, `etn_daily()`, `elw_daily()`        | ETP (ETF, ETN, ELW)                   |
 //! | `client.derivative()`| `futures_daily()`, `equity_stock_futures_daily()`,<br>`equity_kosdaq_futures_daily()`,<br>`options_daily()`, `equity_stock_options_daily()`,<br>`equity_kosdaq_options_daily()` | 파생상품(선물, 옵션 등)               |

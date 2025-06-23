@@ -31,7 +31,7 @@ async fn run_fetch_test(result: Result<DataFrame, Error>) {
 
 #[tokio::test]
 #[ignore]
-async fn test_stock_kospi_daily_by_date() {
+async fn test_stock_stock_daily_by_date() {
     if let Some(client) = setup() {
         run_fetch_test(client.stock().stock_daily().date("20240105").fetch().await).await;
     }
@@ -39,7 +39,7 @@ async fn test_stock_kospi_daily_by_date() {
 
 #[tokio::test]
 #[ignore]
-async fn test_stock_kospi_daily_latest() {
+async fn test_stock_stock_daily_latest() {
     if let Some(client) = setup() {
         run_fetch_test(client.stock().stock_daily().latest().fetch().await).await;
     }
@@ -127,7 +127,7 @@ async fn test_stock_right_daily_latest() {
 
 #[tokio::test]
 #[ignore]
-async fn test_stock_kospi_base_info_by_date() {
+async fn test_stock_stock_base_info_by_date() {
     if let Some(client) = setup() {
         run_fetch_test(
             client
@@ -143,7 +143,7 @@ async fn test_stock_kospi_base_info_by_date() {
 
 #[tokio::test]
 #[ignore]
-async fn test_stock_kospi_base_info_latest() {
+async fn test_stock_stock_base_info_latest() {
     if let Some(client) = setup() {
         run_fetch_test(client.stock().stock_base_info().latest().fetch().await).await;
     }
@@ -217,17 +217,17 @@ async fn test_index_krx_daily_latest() {
 
 #[tokio::test]
 #[ignore]
-async fn test_index_kospi_daily_by_date() {
+async fn test_index_stock_daily_by_date() {
     if let Some(client) = setup() {
-        run_fetch_test(client.index().kospi_daily().date("20240105").fetch().await).await;
+        run_fetch_test(client.index().stock_daily().date("20240105").fetch().await).await;
     }
 }
 
 #[tokio::test]
 #[ignore]
-async fn test_index_kospi_daily_latest() {
+async fn test_index_stock_daily_latest() {
     if let Some(client) = setup() {
-        run_fetch_test(client.index().kospi_daily().latest().fetch().await).await;
+        run_fetch_test(client.index().stock_daily().latest().fetch().await).await;
     }
 }
 

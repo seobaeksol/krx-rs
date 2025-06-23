@@ -451,7 +451,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // API 호출 (자동으로 로깅됨)
     let data = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .date("20240105")
         .fetch()
         .await?;
@@ -709,7 +709,7 @@ impl<'a> StockApi<'a> {
     }
 
     /// 유가증권 일별매매정보 조회
-    pub fn kospi_daily(&self) -> KospiDailyBuilder<'a> {
+    pub fn stock_daily(&self) -> KospiDailyBuilder<'a> {
         KospiDailyBuilder::new(self.client)
     }
 
@@ -781,7 +781,7 @@ impl<'a> KospiDailyBuilder<'a> {
             )
             .await?;
 
-        parse_kospi_daily(response)
+        parse_stock_daily(response)
     }
 }
 
@@ -904,7 +904,7 @@ pub struct KospiDailyRecord {
 }
 
 /// KOSPI 일별매매정보를 DataFrame으로 변환
-pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<DataFrame> {
+pub fn parse_stock_daily(response: ApiResponse<KospiDailyRecord>) -> Result<DataFrame> {
     let records = response.data;
     
     if records.is_empty() {
@@ -984,7 +984,7 @@ async fn main() -> Result<(), Error> {
     
     let df = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .date("20240105")
         .fetch()
         .await?;
@@ -1029,7 +1029,7 @@ async fn main() -> Result<(), Error> {
         let date = today - Duration::days(i);
         let date_str = date.format("%Y%m%d").to_string();
         
-        match client.stock().kospi_daily().date(&date_str).fetch().await {
+        match client.stock().stock_daily().date(&date_str).fetch().await {
             Ok(df) => {
                 println!("✅ {} 데이터 수집 완료", date_str);
                 all_data.push(df);

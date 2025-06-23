@@ -18,8 +18,8 @@ use polars::prelude::DataFrame;
 /// let stock_api = client.stock();
 ///
 /// // KOSPI 일별 시세 조회
-/// let kospi_daily = stock_api.kospi_daily().date("20240105").fetch().await?;
-/// println!("KOSPI Daily: {}", kospi_daily);
+/// let stock_daily = stock_api.stock_daily().date("20240105").fetch().await?;
+/// println!("KOSPI Daily: {}", stock_daily);
 ///
 /// // KOSDAQ 종목 기본 정보 조회
 /// let kosdaq_info = stock_api.kosdaq_base_info().latest().fetch().await?;
@@ -102,11 +102,11 @@ impl<'a> StockApi<'a> {
 /// # async fn main() -> Result<(), krx_rs::error::Error> {
 /// # let client = Client::new("YOUR_AUTH_KEY");
 /// // 2024년 1월 5일 기준 데이터 조회
-/// let df_by_date = client.stock().kospi_daily().date("20240105").fetch().await?;
+/// let df_by_date = client.stock().stock_daily().date("20240105").fetch().await?;
 /// println!("{}", df_by_date);
 ///
 /// // 가장 최신(전일) 데이터 조회
-/// let df_latest = client.stock().kospi_daily().latest().fetch().await?;
+/// let df_latest = client.stock().stock_daily().latest().fetch().await?;
 /// println!("{}", df_latest);
 /// # Ok(())
 /// # }
@@ -161,7 +161,7 @@ impl<'a> StockDailyBuilder<'a> {
             .get::<ApiResponse<StockDailyRecord>>("/sto/stk_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
-        parse_kospi_daily(response)
+        parse_stock_daily(response)
     }
 }
 
@@ -409,11 +409,11 @@ impl<'a> StockRightDailyBuilder<'a> {
 /// # async fn main() -> Result<(), krx_rs::error::Error> {
 /// # let client = Client::new("YOUR_AUTH_KEY");
 /// // 2024년 1월 5일 기준 데이터 조회
-/// let df_by_date = client.stock().kospi_base_info().date("20240105").fetch().await?;
+/// let df_by_date = client.stock().stock_base_info().date("20240105").fetch().await?;
 /// println!("{}", df_by_date);
 ///
 /// // 가장 최신 거래일(보통 전일)의 데이터로 설정합니다.
-/// let df_latest = client.stock().kospi_base_info().latest().fetch().await?;
+/// let df_latest = client.stock().stock_base_info().latest().fetch().await?;
 /// println!("{}", df_latest);
 /// # Ok(())
 /// # }

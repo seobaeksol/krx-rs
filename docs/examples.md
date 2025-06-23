@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new("your_auth_key");
     
     // KOSPI 일별 데이터 조회
-    let df = client.stock().kospi_daily().today().fetch().await?;
+    let df = client.stock().stock_daily().today().fetch().await?;
     
     // 상승률 TOP 10
     let top_gainers = df.lazy()
@@ -50,13 +50,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let today = "20240105";
     
     let df_yesterday = client.stock()
-        .kospi_daily()
+        .stock_daily()
         .date(yesterday)
         .fetch()
         .await?;
     
     let df_today = client.stock()
-        .kospi_daily()
+        .stock_daily()
         .date(today)
         .fetch()
         .await?;
@@ -99,7 +99,7 @@ use polars::prelude::*;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new("your_auth_key");
     
-    let df = client.stock().kospi_daily().today().fetch().await?;
+    let df = client.stock().stock_daily().today().fetch().await?;
     
     // 섹터별 평균 등락률
     let sector_performance = df.lazy()
@@ -168,7 +168,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // 동시에 여러 시장 데이터 조회
     let (kospi, kosdaq, konex) = try_join3(
-        client.stock().kospi_daily().today().fetch(),
+        client.stock().stock_daily().today().fetch(),
         client.stock().kosdaq_daily().today().fetch(),
         client.stock().konex_daily().today().fetch()
     ).await?;
@@ -212,7 +212,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let date = today - Duration::days(i);
         let date_str = date.format("%Y%m%d").to_string();
         
-        match client.stock().kospi_daily().date(&date_str).fetch().await {
+        match client.stock().stock_daily().date(&date_str).fetch().await {
             Ok(df) => {
                 println!("{} 데이터 수집 완료", date_str);
                 all_data.push(df);
@@ -250,7 +250,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         interval.tick().await;
         
-        match client.stock().kospi_daily().today().fetch().await {
+        match client.stock().stock_daily().today().fetch().await {
             Ok(df) => {
                 // 특정 종목 모니터링
                 let samsung = df.lazy()
@@ -314,7 +314,7 @@ async fn fetch_with_retry(
     let mut retries = 0;
     
     loop {
-        match client.stock().kospi_daily().date(date).fetch().await {
+        match client.stock().stock_daily().date(date).fetch().await {
             Ok(df) => return Ok(df),
             Err(Error::RateLimit { retry_after }) => {
                 println!("Rate limit. {} 초 대기...", retry_after);

@@ -17,7 +17,7 @@ KRX Open API의 전체 문서 목록입니다.
 ## 2. 주식 (Stock) APIs
 
 ### 일별매매정보
-- [06. 유가증권 일별매매정보](./KRX_API_Spec/06_stock_kospi_daily.md)
+- [06. 유가증권 일별매매정보](./KRX_API_Spec/06_stock_stock_daily.md)
 - [07. 코스닥 일별매매정보](./KRX_API_Spec/07_stock_kosdaq_daily.md)
 - [08. 코넥스 일별매매정보](./KRX_API_Spec/08_stock_konex_daily.md)
 - [09. 신주인수권증권 일별매매정보](./KRX_API_Spec/09_stock_warrant_daily.md)

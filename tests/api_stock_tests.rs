@@ -32,7 +32,7 @@ async fn setup_stock_test(
 
 // KOSPI Daily Tests
 #[tokio::test]
-async fn test_kospi_daily_with_date() {
+async fn test_stock_daily_with_date() {
     let response_body = r#"{
         "OutBlock_1": [{
             "ACC_TRDVAL": "1144821080",
@@ -72,7 +72,7 @@ async fn test_kospi_daily_with_date() {
 }
 
 #[tokio::test]
-async fn test_kospi_daily_with_latest() {
+async fn test_stock_daily_with_latest() {
     let response_body = r#"{
         "OutBlock_1": [{
             "ACC_TRDVAL": "89295560",

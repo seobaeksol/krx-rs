@@ -418,7 +418,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_kospi_daily() {
+    fn test_parse_stock_daily() {
         let record = KospiIndexDailyRecord {
             base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
             index_class: "IDX002".to_string(),

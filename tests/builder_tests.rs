@@ -11,7 +11,7 @@ fn create_test_client() -> Client {
 }
 
 #[test]
-fn test_stock_api_kospi_daily_builder() {
+fn test_stock_api_stock_daily_builder() {
     let client = create_test_client();
     let stock_api = client.stock();
 
@@ -90,7 +90,7 @@ fn test_index_api_builders() {
     let _krx_builder = index_api.krx_daily().date("20240105");
 
     // KOSPI 지수 빌더
-    let _kospi_builder = index_api.kospi_daily().latest();
+    let _kospi_builder = index_api.stock_daily().latest();
 
     // KOSDAQ 지수 빌더
     let _kosdaq_builder = index_api.kosdaq_daily().date("20240105");

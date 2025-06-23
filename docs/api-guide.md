@@ -19,7 +19,7 @@ krx-rs는 KRX Open API를 7개의 주요 카테고리로 구성합니다:
 ### KOSPI 일별 시세
 ```rust
 let data = client.stock()
-    .kospi_daily()
+    .stock_daily()
     .date("20240105")
     .fetch()
     .await?;
@@ -64,7 +64,7 @@ let right = client.stock()
 ```rust
 // KOSPI 종목 정보
 let kospi_info = client.stock()
-    .kospi_base_info()
+    .stock_base_info()
     .fetch()
     .await?;
 
@@ -96,7 +96,7 @@ let krx_index = client.index()
 ```rust
 // KOSPI 지수
 let kospi = client.index()
-    .kospi_daily()
+    .stock_daily()
     .today()
     .fetch()
     .await?;
@@ -278,7 +278,7 @@ let sri_bonds = client.esg()
 모든 API는 Polars DataFrame을 반환합니다:
 
 ```rust
-let df = client.stock().kospi_daily().today().fetch().await?;
+let df = client.stock().stock_daily().today().fetch().await?;
 
 // 컬럼 확인
 println!("컬럼: {:?}", df.get_column_names());
@@ -299,7 +299,7 @@ let top_gainers = df.lazy()
     .collect()?;
 
 // CSV로 저장
-df.write_csv("kospi_daily.csv")?;
+df.write_csv("stock_daily.csv")?;
 ```
 
 ## 빌더 패턴
@@ -308,18 +308,18 @@ df.write_csv("kospi_daily.csv")?;
 
 ```rust
 // 기본 사용
-let data = client.stock().kospi_daily().fetch().await?;
+let data = client.stock().stock_daily().fetch().await?;
 
 // 날짜 지정
 let data = client.stock()
-    .kospi_daily()
+    .stock_daily()
     .date("20240105")
     .fetch()
     .await?;
 
 // 오늘 날짜
 let data = client.stock()
-    .kospi_daily()
+    .stock_daily()
     .today()
     .fetch()
     .await?;
@@ -332,7 +332,7 @@ let data = client.stock()
 ```rust
 // 동시에 여러 API 호출
 let (kospi, kosdaq) = tokio::join!(
-    client.stock().kospi_daily().today().fetch(),
+    client.stock().stock_daily().today().fetch(),
     client.stock().kosdaq_daily().today().fetch()
 );
 
@@ -347,7 +347,7 @@ let kosdaq_data = kosdaq?;
 ```rust
 use krx_rs::Error;
 
-match client.stock().kospi_daily().fetch().await {
+match client.stock().stock_daily().fetch().await {
     Ok(data) => println!("성공"),
     Err(e) => match e {
         Error::InvalidInput(msg) => println!("잘못된 입력: {}", msg),

@@ -60,7 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("KOSPI 일별 시세 조회 중...");
     let kospi_data = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .date("20240105")  // YYYYMMDD 형식
         .fetch()
         .await?;
@@ -105,12 +105,12 @@ krx-rs는 편리한 날짜 처리 메서드를 제공합니다:
 
 ```rust
 // 특정 날짜 지정
-let data = client.stock().kospi_daily()
+let data = client.stock().stock_daily()
     .date("20240105")
     .fetch().await?;
 
 // 오늘 날짜 사용
-let today_data = client.stock().kospi_daily()
+let today_data = client.stock().stock_daily()
     .today()
     .fetch().await?;
 ```
@@ -120,7 +120,7 @@ let today_data = client.stock().kospi_daily()
 모든 API 호출은 `Result`를 반환합니다:
 
 ```rust
-match client.stock().kospi_daily().today().fetch().await {
+match client.stock().stock_daily().today().fetch().await {
     Ok(data) => {
         println!("데이터 조회 성공: {} 건", data.height());
     }

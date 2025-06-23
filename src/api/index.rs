@@ -22,7 +22,7 @@ use polars::prelude::DataFrame;
 /// println!("KRX Index: {}", krx_index);
 ///
 /// // KOSPI 지수 최신 정보 조회
-/// let kospi_index = index_api.kospi_daily().latest().fetch().await?;
+/// let kospi_index = index_api.stock_daily().latest().fetch().await?;
 /// println!("KOSPI Index: {}", kospi_index);
 /// # Ok(())
 /// # }
@@ -46,7 +46,7 @@ impl<'a> IndexApi<'a> {
     /// 코스피 지수 전종목 일별 시세.
     ///
     /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201010102)
-    pub fn kospi_daily(&self) -> KospiIndexDailyBuilder<'a> {
+    pub fn stock_daily(&self) -> KospiIndexDailyBuilder<'a> {
         KospiIndexDailyBuilder::new(self.client)
     }
 

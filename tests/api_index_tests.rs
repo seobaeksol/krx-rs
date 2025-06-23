@@ -147,7 +147,7 @@ async fn test_krx_daily_with_latest() {
 
 // KOSPI Daily Tests
 #[tokio::test]
-async fn test_kospi_daily_with_date() {
+async fn test_stock_daily_with_date() {
     let response_body = r#"{
         "OutBlock_1": [{
             "ACC_TRDVAL": "8992273956601",
@@ -196,7 +196,7 @@ async fn test_kospi_daily_with_date() {
     let (client, _server) =
         setup_index_test("/idx/kospi_dd_trd", "20240105", response_body, 200).await;
 
-    let result = client.index().kospi_daily().date("20240105").fetch().await;
+    let result = client.index().stock_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
 
     let df = result.unwrap();
@@ -216,7 +216,7 @@ async fn test_kospi_daily_with_date() {
 }
 
 #[tokio::test]
-async fn test_kospi_daily_with_latest() {
+async fn test_stock_daily_with_latest() {
     let response_body = r#"{
         "OutBlock_1": [{
             "ACC_TRDVAL": "8992273956601",
@@ -277,7 +277,7 @@ async fn test_kospi_daily_with_latest() {
         .build()
         .unwrap();
 
-    let result = client.index().kospi_daily().latest().fetch().await;
+    let result = client.index().stock_daily().latest().fetch().await;
     assert!(result.is_ok());
 
     let df = result.unwrap();
@@ -526,7 +526,7 @@ async fn test_index_invalid_date_format() {
     let result = client.index().krx_daily().date("2024-01-05").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 
-    let result = client.index().kospi_daily().date("240105").fetch().await;
+    let result = client.index().stock_daily().date("240105").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 
     let result = client.index().kosdaq_daily().date("invalid").fetch().await;

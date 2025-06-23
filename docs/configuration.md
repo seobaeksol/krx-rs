@@ -127,7 +127,7 @@ krx-rs는 내부적으로 연결 풀을 사용하여 성능을 최적화합니�
 use futures::future::join_all;
 
 let tasks = vec![
-    client.stock().kospi_daily().today().fetch(),
+    client.stock().stock_daily().today().fetch(),
     client.stock().kosdaq_daily().today().fetch(),
     client.index().krx_daily().today().fetch(),
 ];

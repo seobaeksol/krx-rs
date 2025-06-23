@@ -155,7 +155,7 @@ async fn test_network_error() {
 // --- API Endpoint Tests ---
 
 #[tokio::test]
-async fn test_stock_kospi_daily_api() {
+async fn test_stock_stock_daily_api() {
     let (client, _server) = setup_test_client(
         "/sto/stk_bydd_trd?basDd=20240105",
         "stk_bydd_trd_20240105.json",

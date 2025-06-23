@@ -318,7 +318,7 @@ pub struct StockBaseInfoRecord {
 }
 
 /// KOSPI 일별매매정보를 DataFrame으로 변환
-pub fn parse_kospi_daily(response: ApiResponse<StockDailyRecord>) -> Result<DataFrame> {
+pub fn parse_stock_daily(response: ApiResponse<StockDailyRecord>) -> Result<DataFrame> {
     let records = response.data;
 
     if records.is_empty() {
@@ -384,12 +384,12 @@ pub fn parse_kospi_daily(response: ApiResponse<StockDailyRecord>) -> Result<Data
 
 /// 코스닥 일별매매정보를 DataFrame으로 변환 (KOSPI와 동일)
 pub fn parse_kosdaq_daily(response: ApiResponse<KosdaqDailyRecord>) -> Result<DataFrame> {
-    parse_kospi_daily(response)
+    parse_stock_daily(response)
 }
 
 /// 코넥스 일별매매정보를 DataFrame으로 변환 (KOSPI와 동일)
 pub fn parse_konex_daily(response: ApiResponse<KonexDailyRecord>) -> Result<DataFrame> {
-    parse_kospi_daily(response)
+    parse_stock_daily(response)
 }
 
 /// 신주인수권증권 일별매매정보를 DataFrame으로 변환
@@ -537,7 +537,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_kospi_daily() {
+    fn test_parse_stock_daily() {
         let record = StockDailyRecord {
             base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
             issue_code: "005930".to_string(),
@@ -557,7 +557,7 @@ mod tests {
         };
         let response = ApiResponse { data: vec![record] };
 
-        let df = parse_kospi_daily(response).unwrap();
+        let df = parse_stock_daily(response).unwrap();
 
         assert_eq!(df.shape(), (1, 15));
         assert_eq!(

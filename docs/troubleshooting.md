@@ -77,12 +77,12 @@ Error: InvalidInput("date must be in YYYYMMDD format")
 
 ```rust
 // 올바른 형식
-client.stock().kospi_daily().date("20240105").fetch().await?;
+client.stock().stock_daily().date("20240105").fetch().await?;
 
 // chrono 사용 시
 use chrono::Local;
 let date_str = Local::now().format("%Y%m%d").to_string();
-client.stock().kospi_daily().date(&date_str).fetch().await?;
+client.stock().stock_daily().date(&date_str).fetch().await?;
 ```
 
 ### 5. 데이터 없음
@@ -98,7 +98,7 @@ client.stock().kospi_daily().date(&date_str).fetch().await?;
 
 **해결방법:**
 ```rust
-let df = client.stock().kospi_daily().date("20240105").fetch().await?;
+let df = client.stock().stock_daily().date("20240105").fetch().await?;
 
 if df.height() == 0 {
     println!("데이터가 없습니다. 날짜를 확인하세요.");
@@ -190,7 +190,7 @@ use futures::future::try_join_all;
 
 // 병렬 처리
 let tasks = dates.iter().map(|date| {
-    client.stock().kospi_daily().date(date).fetch()
+    client.stock().stock_daily().date(date).fetch()
 });
 
 let results = try_join_all(tasks).await?;

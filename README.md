@@ -44,7 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 특정 날짜의 데이터 조회
     let data_by_date = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .date("20240105")
         .fetch()
         .await?;
@@ -53,7 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 가장 최신(전일) 데이터 조회
     let latest_data = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .latest()
         .fetch()
         .await?;
@@ -69,7 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```rust
 // KOSPI 일별 시세
-let kospi_daily = client.stock().kospi_daily().today().fetch().await?;
+let stock_daily = client.stock().stock_daily().today().fetch().await?;
 
 // KOSDAQ 종목 기본정보
 let kosdaq_info = client.stock().kosdaq_base_info().fetch().await?;
@@ -82,7 +82,7 @@ let kosdaq_info = client.stock().kosdaq_base_info().fetch().await?;
 let krx_index = client.index().krx_daily().date("20240105").fetch().await?;
 
 // KOSPI 지수
-let kospi_index = client.index().kospi_daily().today().fetch().await?;
+let kospi_index = client.index().stock_daily().today().fetch().await?;
 ```
 
 ### 채권 (Bond)
@@ -157,7 +157,7 @@ let client = Client::builder()
 모든 API 응답은 [Polars DataFrame](https://github.com/pola-rs/polars)으로 반환됩니다:
 
 ```rust
-let df = client.stock().kospi_daily().today().fetch().await?;
+let df = client.stock().stock_daily().today().fetch().await?;
 
 // DataFrame 작업
 let filtered = df.lazy()
