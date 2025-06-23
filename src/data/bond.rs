@@ -380,4 +380,316 @@ mod tests {
             Some(4.12)
         );
     }
+
+    #[test]
+    fn test_parse_bond_daily_empty() {
+        let response = ApiResponse { data: vec![] };
+        let df = parse_bond_daily(response).unwrap();
+        assert_eq!(df.shape(), (0, 0));
+    }
+
+    #[test]
+    fn test_parse_bond_daily_with_null_values() {
+        let record = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR203801GC59".to_string(),
+            issue_name: "국민주택1종(03-5)".to_string(),
+            market_name: "일반".to_string(),
+            close_price: None,
+            close_price_yield: None,
+            open_price: Some(10045.0),
+            open_price_yield: None,
+            high_price: None,
+            high_price_yield: Some(4.09),
+            low_price: None,
+            low_price_yield: None,
+            price_change: "0".to_string(),
+            trading_volume: None,
+            trading_value: None,
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_bond_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 15));
+        assert!(df.column("종가").unwrap().f64().unwrap().get(0).is_none());
+        assert!(df.column("종가수익률").unwrap().f64().unwrap().get(0).is_none());
+        assert_eq!(
+            df.column("시가").unwrap().f64().unwrap().get(0),
+            Some(10045.0)
+        );
+        assert!(df.column("시가수익률").unwrap().f64().unwrap().get(0).is_none());
+        assert!(df.column("거래량").unwrap().i64().unwrap().get(0).is_none());
+        assert!(df.column("거래대금").unwrap().i64().unwrap().get(0).is_none());
+    }
+
+    #[test]
+    fn test_parse_small_bond_daily() {
+        let record = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR203801GC59".to_string(),
+            issue_name: "소액채권테스트".to_string(),
+            market_name: "소액".to_string(),
+            close_price: Some(1000.0),
+            close_price_yield: Some(3.8),
+            open_price: Some(999.0),
+            open_price_yield: Some(3.81),
+            high_price: Some(1001.0),
+            high_price_yield: Some(3.79),
+            low_price: Some(998.0),
+            low_price_yield: Some(3.82),
+            price_change: "1".to_string(),
+            trading_volume: Some(100),
+            trading_value: Some(100000),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_small_bond_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 15));
+        assert_eq!(
+            df.column("종목명").unwrap().str().unwrap().get(0),
+            Some("소액채권테스트")
+        );
+        assert_eq!(
+            df.column("시장구분").unwrap().str().unwrap().get(0),
+            Some("소액")
+        );
+    }
+
+    #[test]
+    fn test_parse_kts_daily_empty() {
+        let response: ApiResponse<KtsDailyRecord> = ApiResponse { data: vec![] };
+        let df = parse_kts_daily(response).unwrap();
+        assert_eq!(df.shape(), (0, 0));
+    }
+
+    #[test]
+    fn test_parse_kts_daily_with_null_values() {
+        let record = KtsDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR103501GC38".to_string(),
+            issue_name: "국고03500-2603(23-1)".to_string(),
+            market_name: "KTS".to_string(),
+            government_bond_issue_type: "경과".to_string(),
+            bond_expiry_type: "장기".to_string(),
+            close_price: None,
+            close_price_yield: None,
+            open_price: None,
+            open_price_yield: None,
+            high_price: None,
+            high_price_yield: None,
+            low_price: None,
+            low_price_yield: None,
+            price_change: None,
+            trading_volume: None,
+            trading_value: None,
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_kts_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 17));
+        assert!(df.column("종가").unwrap().f64().unwrap().get(0).is_none());
+        assert!(df.column("대비").unwrap().f64().unwrap().get(0).is_none());
+        assert!(df.column("거래량").unwrap().i64().unwrap().get(0).is_none());
+    }
+
+    #[test]
+    fn test_parse_bond_daily_multiple_records() {
+        let record1 = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR203801GC59".to_string(),
+            issue_name: "국민주택1종(03-5)".to_string(),
+            market_name: "일반".to_string(),
+            close_price: Some(10050.0),
+            close_price_yield: Some(4.1),
+            open_price: Some(10045.0),
+            open_price_yield: Some(4.11),
+            high_price: Some(10055.0),
+            high_price_yield: Some(4.09),
+            low_price: Some(10040.0),
+            low_price_yield: Some(4.12),
+            price_change: "5".to_string(),
+            trading_volume: Some(500),
+            trading_value: Some(5025000),
+        };
+        
+        let record2 = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR203802GD60".to_string(),
+            issue_name: "국민주택2종(04-6)".to_string(),
+            market_name: "일반".to_string(),
+            close_price: Some(10100.0),
+            close_price_yield: Some(4.0),
+            open_price: Some(10095.0),
+            open_price_yield: Some(4.01),
+            high_price: Some(10105.0),
+            high_price_yield: Some(3.99),
+            low_price: Some(10090.0),
+            low_price_yield: Some(4.02),
+            price_change: "10".to_string(),
+            trading_volume: Some(1000),
+            trading_value: Some(10100000),
+        };
+        
+        let response = ApiResponse { data: vec![record1, record2] };
+        let df = parse_bond_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (2, 15));
+        assert_eq!(
+            df.column("종목코드").unwrap().str().unwrap().get(0),
+            Some("KR203801GC59")
+        );
+        assert_eq!(
+            df.column("종목코드").unwrap().str().unwrap().get(1),
+            Some("KR203802GD60")
+        );
+    }
+
+    #[test]
+    fn test_parse_kts_daily_multiple_records() {
+        let record1 = KtsDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR103501GC38".to_string(),
+            issue_name: "국고03500-2603(23-1)".to_string(),
+            market_name: "KTS".to_string(),
+            government_bond_issue_type: "경과".to_string(),
+            bond_expiry_type: "장기".to_string(),
+            close_price: Some(10000.0),
+            close_price_yield: Some(3.5),
+            open_price: Some(9990.0),
+            open_price_yield: Some(3.51),
+            high_price: Some(10010.0),
+            high_price_yield: Some(3.49),
+            low_price: Some(9980.0),
+            low_price_yield: Some(3.52),
+            price_change: Some(10.0),
+            trading_volume: Some(1000),
+            trading_value: Some(10000000),
+        };
+
+        let record2 = KtsDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR103502GD39".to_string(),
+            issue_name: "국고03500-2803(24-2)".to_string(),
+            market_name: "KTS".to_string(),
+            government_bond_issue_type: "신규".to_string(),
+            bond_expiry_type: "장기".to_string(),
+            close_price: Some(10100.0),
+            close_price_yield: Some(3.4),
+            open_price: Some(10090.0),
+            open_price_yield: Some(3.41),
+            high_price: Some(10110.0),
+            high_price_yield: Some(3.39),
+            low_price: Some(10080.0),
+            low_price_yield: Some(3.42),
+            price_change: Some(15.0),
+            trading_volume: Some(2000),
+            trading_value: Some(20200000),
+        };
+
+        let response = ApiResponse { data: vec![record1, record2] };
+        let df = parse_kts_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (2, 17));
+        assert_eq!(
+            df.column("종목코드").unwrap().str().unwrap().get(0),
+            Some("KR103501GC38")
+        );
+        assert_eq!(
+            df.column("종목코드").unwrap().str().unwrap().get(1),
+            Some("KR103502GD39")
+        );
+        assert_eq!(
+            df.column("국채발행유형").unwrap().str().unwrap().get(0),
+            Some("경과")
+        );
+        assert_eq!(
+            df.column("국채발행유형").unwrap().str().unwrap().get(1),
+            Some("신규")
+        );
+    }
+
+    #[test]
+    fn test_parse_bond_daily_date_formatting() {
+        let record = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
+            issue_code: "TEST".to_string(),
+            issue_name: "테스트채권".to_string(),
+            market_name: "일반".to_string(),
+            close_price: Some(10000.0),
+            close_price_yield: Some(4.0),
+            open_price: Some(10000.0),
+            open_price_yield: Some(4.0),
+            high_price: Some(10000.0),
+            high_price_yield: Some(4.0),
+            low_price: Some(10000.0),
+            low_price_yield: Some(4.0),
+            price_change: "0".to_string(),
+            trading_volume: Some(100),
+            trading_value: Some(1000000),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_bond_daily(response).unwrap();
+
+        assert_eq!(
+            df.column("날짜").unwrap().str().unwrap().get(0),
+            Some("2024-12-31")
+        );
+    }
+
+    #[test]
+    fn test_parse_bond_daily_with_empty_price_change() {
+        let record = BondDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR101501DC22".to_string(),
+            issue_name: "국민주택1종22-02".to_string(),
+            market_name: "일반채권시장".to_string(),
+            close_price: Some(9386.0),
+            close_price_yield: Some(3.652),
+            open_price: Some(9385.5),
+            open_price_yield: Some(3.654),
+            high_price: Some(9386.0),
+            high_price_yield: Some(3.652),
+            low_price: Some(9385.5),
+            low_price_yield: Some(3.654),
+            price_change: "".to_string(), // Empty string from actual sample data
+            trading_volume: Some(36540000),
+            trading_value: Some(34295467),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_bond_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 15));
+        assert_eq!(
+            df.column("대비").unwrap().str().unwrap().get(0),
+            Some("") // Empty string should be preserved as-is
+        );
+    }
+
+    #[test]
+    fn test_parse_kts_daily_with_dash_price_change() {
+        let record = KtsDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "KR103503GD97".to_string(),
+            issue_name: "국고03625-2509(23-8)".to_string(),
+            market_name: "국채전문유통시장".to_string(),
+            government_bond_issue_type: "지표".to_string(),
+            bond_expiry_type: "2".to_string(),
+            close_price: Some(10158.0),
+            close_price_yield: Some(3.381),
+            open_price: Some(10157.0),
+            open_price_yield: Some(3.388),
+            high_price: Some(10158.5),
+            high_price_yield: Some(3.378),
+            low_price: Some(10155.5),
+            low_price_yield: Some(3.397),
+            price_change: None, // "-" from sample data should deserialize to None
+            trading_volume: Some(103000000000),
+            trading_value: Some(104622050000),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_kts_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 17));
+        assert!(df.column("대비").unwrap().f64().unwrap().get(0).is_none());
+    }
 }
