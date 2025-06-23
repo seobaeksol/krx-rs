@@ -1,5 +1,5 @@
 use tracing::info;
-use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt, Registry};
+use tracing_subscriber::{EnvFilter, Registry, layer::SubscriberExt, util::SubscriberInitExt};
 
 /// 로깅 설정 구조체
 #[derive(Debug, Clone)]
@@ -66,7 +66,7 @@ pub fn init_logging(config: &LoggingConfig) -> Result<(), Box<dyn std::error::Er
             }
             return Err(e);
         }
-        return Ok(());
+        Ok(())
     }
 
     #[cfg(not(test))]
@@ -168,13 +168,16 @@ mod tests {
     #[test]
     fn test_init_logging_handles_multiple_calls() {
         let config = LoggingConfig::default();
-        
+
         // First call
         let result1 = init_logging(&config);
         assert!(result1.is_ok(), "First init should succeed");
 
         // Second call - should also succeed in test environment
         let result2 = init_logging(&config);
-        assert!(result2.is_ok(), "Second init should succeed in test environment");
+        assert!(
+            result2.is_ok(),
+            "Second init should succeed in test environment"
+        );
     }
 }
