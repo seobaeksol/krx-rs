@@ -39,8 +39,8 @@ impl<'a> StockApi<'a> {
     /// 유가증권(KOSPI) 전종목 일별 시세.
     ///
     /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020101)
-    pub fn kospi_daily(&self) -> KospiDailyBuilder<'a> {
-        KospiDailyBuilder::new(self.client)
+    pub fn stock_daily(&self) -> StockDailyBuilder<'a> {
+        StockDailyBuilder::new(self.client)
     }
 
     /// 코스닥(KOSDAQ) 전종목 일별 시세.
@@ -74,8 +74,8 @@ impl<'a> StockApi<'a> {
     /// 유가증권(KOSPI) 종목 기본정보.
     ///
     /// [API 명세](https://data.krx.co.kr/contents/MDC/MDI/mdiLoader/index.cmd?menuId=MDC0201020601)
-    pub fn kospi_base_info(&self) -> KospiBaseInfoBuilder<'a> {
-        KospiBaseInfoBuilder::new(self.client)
+    pub fn stock_base_info(&self) -> StockBaseInfoBuilder<'a> {
+        StockBaseInfoBuilder::new(self.client)
     }
 
     /// 코스닥(KOSDAQ) 종목 기본정보.
@@ -112,12 +112,12 @@ impl<'a> StockApi<'a> {
 /// # }
 /// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
-pub struct KospiDailyBuilder<'a> {
+pub struct StockDailyBuilder<'a> {
     client: &'a Client,
     base_date: Option<String>,
 }
 
-impl<'a> KospiDailyBuilder<'a> {
+impl<'a> StockDailyBuilder<'a> {
     fn new(client: &'a Client) -> Self {
         Self {
             client,
@@ -158,7 +158,7 @@ impl<'a> KospiDailyBuilder<'a> {
 
         let response = self
             .client
-            .get::<ApiResponse<KospiDailyRecord>>("/sto/stk_bydd_trd", &[("basDd", &base_date)])
+            .get::<ApiResponse<StockDailyRecord>>("/sto/stk_bydd_trd", &[("basDd", &base_date)])
             .await?;
 
         parse_kospi_daily(response)
@@ -419,12 +419,12 @@ impl<'a> StockRightDailyBuilder<'a> {
 /// # }
 /// ```
 #[must_use = "Builder does nothing unless you call .fetch()"]
-pub struct KospiBaseInfoBuilder<'a> {
+pub struct StockBaseInfoBuilder<'a> {
     client: &'a Client,
     base_date: Option<String>,
 }
 
-impl<'a> KospiBaseInfoBuilder<'a> {
+impl<'a> StockBaseInfoBuilder<'a> {
     fn new(client: &'a Client) -> Self {
         Self {
             client,

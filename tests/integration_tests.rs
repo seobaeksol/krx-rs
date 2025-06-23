@@ -33,7 +33,7 @@ async fn run_fetch_test(result: Result<DataFrame, Error>) {
 #[ignore]
 async fn test_stock_kospi_daily_by_date() {
     if let Some(client) = setup() {
-        run_fetch_test(client.stock().kospi_daily().date("20240105").fetch().await).await;
+        run_fetch_test(client.stock().stock_daily().date("20240105").fetch().await).await;
     }
 }
 
@@ -41,7 +41,7 @@ async fn test_stock_kospi_daily_by_date() {
 #[ignore]
 async fn test_stock_kospi_daily_latest() {
     if let Some(client) = setup() {
-        run_fetch_test(client.stock().kospi_daily().latest().fetch().await).await;
+        run_fetch_test(client.stock().stock_daily().latest().fetch().await).await;
     }
 }
 
@@ -132,7 +132,7 @@ async fn test_stock_kospi_base_info_by_date() {
         run_fetch_test(
             client
                 .stock()
-                .kospi_base_info()
+                .stock_base_info()
                 .date("20240105")
                 .fetch()
                 .await,
@@ -145,7 +145,7 @@ async fn test_stock_kospi_base_info_by_date() {
 #[ignore]
 async fn test_stock_kospi_base_info_latest() {
     if let Some(client) = setup() {
-        run_fetch_test(client.stock().kospi_base_info().latest().fetch().await).await;
+        run_fetch_test(client.stock().stock_base_info().latest().fetch().await).await;
     }
 }
 

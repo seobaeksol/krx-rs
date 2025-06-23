@@ -16,18 +16,18 @@ fn test_stock_api_kospi_daily_builder() {
     let stock_api = client.stock();
 
     // 기본 빌더 생성
-    let builder = stock_api.kospi_daily();
+    let builder = stock_api.stock_daily();
 
     // 날짜 설정 메서드 체이닝 테스트
     let _builder_with_date = builder.date("20240105");
 
     // 최신 날짜 설정 테스트
     let client2 = create_test_client();
-    let _builder_with_latest = client2.stock().kospi_daily().latest();
+    let _builder_with_latest = client2.stock().stock_daily().latest();
 
     // 체이닝 테스트
     let client3 = create_test_client();
-    let _chained_builder = client3.stock().kospi_daily().date("20240105");
+    let _chained_builder = client3.stock().stock_daily().date("20240105");
 }
 
 #[test]
@@ -76,7 +76,7 @@ fn test_stock_api_base_info_builders() {
     let stock_api = client.stock();
 
     // 이전에는 날짜 파라미터가 없었지만, 이제 있어야 함
-    let _kospi_base_builder = stock_api.kospi_base_info().date("20240105");
+    let _kospi_base_builder = stock_api.stock_base_info().date("20240105");
     let _kosdaq_base_builder = stock_api.kosdaq_base_info().latest();
     let _konex_base_builder = stock_api.konex_base_info().date("20240105");
 }
@@ -185,15 +185,15 @@ fn test_builder_date_method_accepts_different_types() {
     let client = create_test_client();
 
     // String 타입
-    let _builder1 = client.stock().kospi_daily().date(String::from("20240105"));
+    let _builder1 = client.stock().stock_daily().date(String::from("20240105"));
 
     // &str 타입
-    let _builder2 = client.stock().kospi_daily().date("20240105");
+    let _builder2 = client.stock().stock_daily().date("20240105");
 
     // 체이닝에서 다양한 타입 사용
     let client2 = create_test_client();
     let date_string = "20240105".to_string();
-    let _builder3 = client2.stock().kospi_daily().date(date_string);
+    let _builder3 = client2.stock().stock_daily().date(date_string);
 }
 
 #[test]
@@ -206,7 +206,7 @@ fn test_latest_method_consistency() {
         .to_string();
 
     // 실제로는 내부 구현이므로 호출만 테스트
-    let _builder = client.stock().kospi_daily().latest();
+    let _builder = client.stock().stock_daily().latest();
     let _builder2 = client.index().krx_daily().latest();
     let _builder3 = client.bond().kts_daily().latest();
 }
@@ -226,7 +226,7 @@ fn test_multiple_api_access() {
 
     // 동일 API를 여러 번 접근해도 문제없어야 함
     let _stock_api2 = client.stock();
-    let _builder1 = _stock_api2.kospi_daily();
+    let _builder1 = _stock_api2.stock_daily();
     let _builder2 = _stock_api2.kosdaq_daily();
 }
 
@@ -235,10 +235,10 @@ fn test_builder_method_chaining_order() {
     let client = create_test_client();
 
     // 메서드 체이닝 순서 테스트
-    let _builder1 = client.stock().kospi_daily().date("20240105");
+    let _builder1 = client.stock().stock_daily().date("20240105");
 
     let client2 = create_test_client();
-    let _builder2 = client2.stock().kospi_daily().latest().date("20240105");
+    let _builder2 = client2.stock().stock_daily().latest().date("20240105");
 
     let client3 = create_test_client();
     let _builder3 = client3

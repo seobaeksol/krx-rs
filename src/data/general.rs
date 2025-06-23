@@ -194,6 +194,9 @@ pub fn parse_gold_daily(response: ApiResponse<GoldDailyRecord>) -> Result<DataFr
     let mut issue_codes = Vec::with_capacity(records.len());
     let mut issue_names = Vec::with_capacity(records.len());
     let mut close_prices = Vec::with_capacity(records.len());
+    let mut open_prices = Vec::with_capacity(records.len());
+    let mut high_prices = Vec::with_capacity(records.len());
+    let mut low_prices = Vec::with_capacity(records.len());
     let mut price_changes = Vec::with_capacity(records.len());
     let mut fluctuation_rates = Vec::with_capacity(records.len());
     let mut trading_volumes = Vec::with_capacity(records.len());
@@ -204,6 +207,9 @@ pub fn parse_gold_daily(response: ApiResponse<GoldDailyRecord>) -> Result<DataFr
         issue_codes.push(record.issue_code);
         issue_names.push(record.issue_name);
         close_prices.push(record.close_price);
+        open_prices.push(record.open_price);
+        high_prices.push(record.high_price);
+        low_prices.push(record.low_price);
         price_changes.push(record.price_change);
         fluctuation_rates.push(record.fluctuation_rate);
         trading_volumes.push(record.trading_volume.map(|v| v as i64));
@@ -215,6 +221,9 @@ pub fn parse_gold_daily(response: ApiResponse<GoldDailyRecord>) -> Result<DataFr
         "종목코드" => issue_codes,
         "종목명" => issue_names,
         "종가" => close_prices,
+        "시가" => open_prices,
+        "고가" => high_prices,
+        "저가" => low_prices,
         "대비" => price_changes,
         "등락률" => fluctuation_rates,
         "거래량" => trading_volumes,
@@ -236,6 +245,9 @@ pub fn parse_emissions_daily(response: ApiResponse<EmissionsDailyRecord>) -> Res
     let mut issue_codes = Vec::with_capacity(records.len());
     let mut issue_names = Vec::with_capacity(records.len());
     let mut close_prices = Vec::with_capacity(records.len());
+    let mut open_prices = Vec::with_capacity(records.len());
+    let mut high_prices = Vec::with_capacity(records.len());
+    let mut low_prices = Vec::with_capacity(records.len());
     let mut price_changes = Vec::with_capacity(records.len());
     let mut fluctuation_rates = Vec::with_capacity(records.len());
     let mut trading_volumes = Vec::with_capacity(records.len());
@@ -246,6 +258,9 @@ pub fn parse_emissions_daily(response: ApiResponse<EmissionsDailyRecord>) -> Res
         issue_codes.push(record.issue_code);
         issue_names.push(record.issue_name);
         close_prices.push(record.close_price);
+        open_prices.push(record.open_price);
+        high_prices.push(record.high_price);
+        low_prices.push(record.low_price);
         price_changes.push(record.price_change);
         fluctuation_rates.push(record.fluctuation_rate);
         trading_volumes.push(record.trading_volume.map(|v| v as i64));
@@ -257,6 +272,9 @@ pub fn parse_emissions_daily(response: ApiResponse<EmissionsDailyRecord>) -> Res
         "종목코드" => issue_codes,
         "종목명" => issue_names,
         "종가" => close_prices,
+        "시가" => open_prices,
+        "고가" => high_prices,
+        "저가" => low_prices,
         "대비" => price_changes,
         "등락률" => fluctuation_rates,
         "거래량" => trading_volumes,

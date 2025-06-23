@@ -41,7 +41,7 @@ async fn main() -> Result<(), Error> {
 
     let stock_data = client
         .stock()
-        .kospi_daily()
+        .stock_daily()
         .date("20240105")
         .fetch()
         .await?;

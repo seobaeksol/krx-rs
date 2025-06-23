@@ -9,7 +9,7 @@ use serde::Deserialize;
 
 /// 유가증권 일별매매정보 레코드
 #[derive(Debug, Deserialize)]
-pub struct KospiDailyRecord {
+pub struct StockDailyRecord {
     /// 기준일자
     #[serde(rename = "BAS_DD", deserialize_with = "deserialize_krx_date")]
     pub base_date: NaiveDate,
@@ -78,10 +78,10 @@ pub struct KospiDailyRecord {
 }
 
 /// 코스닥 일별매매정보 레코드 (KOSPI와 동일한 구조)
-pub type KosdaqDailyRecord = KospiDailyRecord;
+pub type KosdaqDailyRecord = StockDailyRecord;
 
 /// 코넥스 일별매매정보 레코드 (KOSPI와 동일한 구조)
-pub type KonexDailyRecord = KospiDailyRecord;
+pub type KonexDailyRecord = StockDailyRecord;
 
 /// 신주인수권증권 일별매매정보 레코드
 #[derive(Debug, Deserialize)]
@@ -318,7 +318,7 @@ pub struct StockBaseInfoRecord {
 }
 
 /// KOSPI 일별매매정보를 DataFrame으로 변환
-pub fn parse_kospi_daily(response: ApiResponse<KospiDailyRecord>) -> Result<DataFrame> {
+pub fn parse_kospi_daily(response: ApiResponse<StockDailyRecord>) -> Result<DataFrame> {
     let records = response.data;
 
     if records.is_empty() {
@@ -535,11 +535,10 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
 #[cfg(test)]
 mod tests {
     use super::*;
-    
 
     #[test]
     fn test_parse_kospi_daily() {
-        let record = KospiDailyRecord {
+        let record = StockDailyRecord {
             base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
             issue_code: "005930".to_string(),
             issue_name: "삼성전자".to_string(),
