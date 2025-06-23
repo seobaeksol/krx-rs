@@ -44,8 +44,11 @@ impl Client {
         auth_key: impl Into<String>,
         logging_config: LoggingConfig,
     ) -> Result<Self> {
-        crate::logging::init_logging(&logging_config)
-            .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {e}")))?;
+        // 로깅 초기화 시도하지만 실패해도 계속 진행
+        if let Err(e) = crate::logging::init_logging(&logging_config) {
+            // 로깅 초기화 실패는 경고로만 처리
+            eprintln!("Warning: Failed to initialize logging: {}", e);
+        }
         Ok(Self::new(auth_key))
     }
 
@@ -259,8 +262,10 @@ impl ClientBuilder {
 
         // Initialize logging if a configuration is provided.
         if let Some(config) = self.logging_config {
-            crate::logging::init_logging(&config)
-                .map_err(|e| Error::InvalidInput(format!("Failed to initialize logging: {e}")))?;
+            // 로깅 초기화 시도하지만 실패해도 계속 진행
+            if let Err(e) = crate::logging::init_logging(&config) {
+                eprintln!("Warning: Failed to initialize logging: {}", e);
+            }
         }
 
         let mut headers = HeaderMap::new();

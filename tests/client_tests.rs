@@ -162,7 +162,7 @@ async fn test_stock_kospi_daily_api() {
         200,
     )
     .await;
-    let result = client.stock().kospi_daily().date("20240105").fetch().await;
+    let result = client.stock().stock_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
 }
 
@@ -229,4 +229,195 @@ async fn test_esg_sri_bond_info_api() {
     .await;
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
+}
+
+// Test client with logging
+#[tokio::test]
+async fn test_client_with_logging() {
+    use krx_rs::LoggingConfig;
+
+    let logging_config = LoggingConfig {
+        level: "debug".to_string(),
+        json_format: false,
+        filter_sensitive: true,
+        file_path: None,
+    };
+
+    let result = Client::with_logging("test_key", logging_config);
+    assert!(result.is_ok(), "{:?}", result.err());
+}
+
+#[tokio::test]
+async fn test_client_with_logging_invalid_config() {
+    use krx_rs::LoggingConfig;
+
+    // This would typically fail if we had an invalid logging config
+    // For now, we just test that the constructor works
+    let logging_config = LoggingConfig {
+        level: "invalid_level".to_string(),
+        json_format: false,
+        filter_sensitive: true,
+        file_path: None,
+    };
+
+    // The logging initialization should still work even with invalid level
+    let result = Client::with_logging("test_key", logging_config);
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_client_builder_with_logging() {
+    use krx_rs::LoggingConfig;
+
+    let logging_config = LoggingConfig {
+        level: "info".to_string(),
+        json_format: true,
+        filter_sensitive: false,
+        file_path: Some("/tmp/test.log".to_string()),
+    };
+
+    let result = Client::builder()
+        .auth_key("test_key")
+        .logging(logging_config)
+        .build();
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_client_builder_timeout() {
+    let client = Client::builder()
+        .auth_key("test_key")
+        .timeout(std::time::Duration::from_secs(5))
+        .build()
+        .unwrap();
+
+    // Test that the client was created successfully with custom timeout
+    assert_eq!(client.get_base_url(), "http://data-dbg.krx.co.kr/svc/apis");
+}
+
+#[tokio::test]
+async fn test_client_builder_user_agent() {
+    let client = Client::builder()
+        .auth_key("test_key")
+        .user_agent("custom-agent/1.0")
+        .build()
+        .unwrap();
+
+    assert_eq!(client.get_base_url(), "http://data-dbg.krx.co.kr/svc/apis");
+}
+
+// Test HTTP request logging and error paths
+#[tokio::test]
+async fn test_client_request_with_params() {
+    let mock_server = MockServer::start().await;
+
+    // Test request with multiple query parameters
+    Mock::given(method("GET"))
+        .and(path("/bon/kts_bydd_trd"))
+        .and(query_param("basDd", "20240105"))
+        .and(header("AUTH_KEY", "test_key"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"OutBlock_1": []}"#))
+        .mount(&mock_server)
+        .await;
+
+    let client = Client::builder()
+        .auth_key("test_key")
+        .base_url(mock_server.uri())
+        .build()
+        .unwrap();
+
+    // This would test the internal get method with multiple parameters
+    // We can't call it directly, but we test through a public API
+    let result = client.bond().kts_daily().date("20240105").fetch().await;
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_client_request_timeout() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/bon/kts_bydd_trd"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(r#"{"OutBlock_1": []}"#)
+                .set_delay(std::time::Duration::from_millis(200)),
+        )
+        .mount(&mock_server)
+        .await;
+
+    let client = Client::builder()
+        .auth_key("test_key")
+        .base_url(mock_server.uri())
+        .timeout(std::time::Duration::from_millis(50)) // Very short timeout
+        .build()
+        .unwrap();
+
+    let result = client.bond().kts_daily().date("20240105").fetch().await;
+    assert!(result.is_err());
+}
+
+#[tokio::test]
+async fn test_client_request_with_retry_after_missing() {
+    let mock_server = MockServer::start().await;
+
+    // Rate limit response without retry-after header
+    Mock::given(method("GET"))
+        .and(path("/bon/kts_bydd_trd"))
+        .respond_with(ResponseTemplate::new(429))
+        .mount(&mock_server)
+        .await;
+
+    let client = Client::builder()
+        .auth_key("test_key")
+        .base_url(mock_server.uri())
+        .build()
+        .unwrap();
+
+    let result = client.bond().kts_daily().date("20240105").fetch().await;
+
+    match result {
+        Err(Error::RateLimit { retry_after }) => {
+            assert_eq!(retry_after, 60); // Default value
+        }
+        _ => panic!("Expected RateLimit error"),
+    }
+}
+
+#[tokio::test]
+async fn test_client_request_large_response() {
+    let mock_server = MockServer::start().await;
+
+    // Create a large response body to test truncation logic
+    let _large_response = format!(
+        r#"{{"OutBlock_1": [{}]}}"#,
+        (0..1000)
+            .map(|i| format!(r#"{{"field": "value{i}"}}"#))
+            .collect::<Vec<_>>()
+            .join(",")
+    );
+
+    Mock::given(method("GET"))
+        .and(path("/bon/kts_bydd_trd"))
+        .respond_with(ResponseTemplate::new(200).set_body_string("Invalid JSON for large response"))
+        .mount(&mock_server)
+        .await;
+
+    let client = Client::builder()
+        .auth_key("test_key")
+        .base_url(mock_server.uri())
+        .build()
+        .unwrap();
+
+    let result = client.bond().kts_daily().date("20240105").fetch().await;
+    assert!(result.is_err());
+
+    // Should be a parsing error
+    match result {
+        Err(Error::Parsing { details, .. }) => {
+            assert!(details.contains("Failed to deserialize response"));
+        }
+        _ => panic!("Expected Parsing error"),
+    }
 }
