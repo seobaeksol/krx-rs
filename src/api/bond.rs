@@ -281,18 +281,14 @@ mod tests {
     #[test]
     fn test_builder_date_overwrite() {
         let client = Client::new("test_key");
-        let builder = client.bond().kts_daily()
-            .date("20240105")
-            .date("20240106");
+        let builder = client.bond().kts_daily().date("20240105").date("20240106");
         assert_eq!(builder.base_date, Some("20240106".to_string()));
     }
 
     #[test]
     fn test_builder_latest_overwrite() {
         let client = Client::new("test_key");
-        let builder = client.bond().kts_daily()
-            .date("20240105")
-            .latest();
+        let builder = client.bond().kts_daily().date("20240105").latest();
         assert_eq!(builder.base_date, Some(latest_workday_string()));
     }
 }

@@ -5,9 +5,14 @@ use wiremock::{
 };
 
 /// Helper function to create a mock server with predefined response
-async fn setup_bond_test(endpoint: &str, date: &str, response_body: &str, status: u16) -> (Client, MockServer) {
+async fn setup_bond_test(
+    endpoint: &str,
+    date: &str,
+    response_body: &str,
+    status: u16,
+) -> (Client, MockServer) {
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path(endpoint))
         .and(query_param("basDd", date))
@@ -50,14 +55,18 @@ async fn test_kts_daily_with_date() {
         }]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().kts_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 17));
-    assert_eq!(df.column("종목코드").unwrap().str().unwrap().get(0), Some("KR103501GC38"));
+    assert_eq!(
+        df.column("종목코드").unwrap().str().unwrap().get(0),
+        Some("KR103501GC38")
+    );
 }
 
 #[tokio::test]
@@ -85,7 +94,7 @@ async fn test_kts_daily_with_latest() {
     }"#;
 
     let mock_server = MockServer::start().await;
-    
+
     // We need to check what date the latest() method generates
     Mock::given(method("GET"))
         .and(path("/bon/kts_bydd_trd"))
@@ -107,11 +116,12 @@ async fn test_kts_daily_with_latest() {
 #[tokio::test]
 async fn test_kts_daily_empty_response() {
     let response_body = r#"{"OutBlock_1": []}"#;
-    let (client, _server) = setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().kts_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (0, 0)); // Empty DataFrame
 }
@@ -125,10 +135,17 @@ async fn test_kts_daily_missing_date() {
 
 #[tokio::test]
 async fn test_kts_daily_api_error() {
-    let (client, _server) = setup_bond_test("/bon/kts_bydd_trd", "20240105", "Not Found", 404).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/kts_bydd_trd", "20240105", "Not Found", 404).await;
+
     let result = client.bond().kts_daily().date("20240105").fetch().await;
-    assert!(matches!(result, Err(Error::ApiError { status_code: 404, .. })));
+    assert!(matches!(
+        result,
+        Err(Error::ApiError {
+            status_code: 404,
+            ..
+        })
+    ));
 }
 
 // Bond Daily Tests
@@ -154,14 +171,18 @@ async fn test_bond_daily_with_date() {
         }]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().bond_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 15));
-    assert_eq!(df.column("종목코드").unwrap().str().unwrap().get(0), Some("KR203801GC59"));
+    assert_eq!(
+        df.column("종목코드").unwrap().str().unwrap().get(0),
+        Some("KR203801GC59")
+    );
 }
 
 #[tokio::test]
@@ -187,7 +208,7 @@ async fn test_bond_daily_with_latest() {
     }"#;
 
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/bon/bnd_bydd_trd"))
         .and(header("AUTH_KEY", "test_key"))
@@ -208,11 +229,12 @@ async fn test_bond_daily_with_latest() {
 #[tokio::test]
 async fn test_bond_daily_empty_response() {
     let response_body = r#"{"OutBlock_1": []}"#;
-    let (client, _server) = setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().bond_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (0, 0));
 }
@@ -227,8 +249,9 @@ async fn test_bond_daily_missing_date() {
 #[tokio::test]
 async fn test_bond_daily_parsing_error() {
     let response_body = "Invalid JSON";
-    let (client, _server) = setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().bond_daily().date("20240105").fetch().await;
     assert!(matches!(result, Err(Error::Parsing { .. })));
 }
@@ -256,14 +279,23 @@ async fn test_small_bond_daily_with_date() {
         }]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/smb_bydd_trd", "20240105", response_body, 200).await;
-    
-    let result = client.bond().small_bond_daily().date("20240105").fetch().await;
+    let (client, _server) =
+        setup_bond_test("/bon/smb_bydd_trd", "20240105", response_body, 200).await;
+
+    let result = client
+        .bond()
+        .small_bond_daily()
+        .date("20240105")
+        .fetch()
+        .await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 15));
-    assert_eq!(df.column("종목명").unwrap().str().unwrap().get(0), Some("소액채권"));
+    assert_eq!(
+        df.column("종목명").unwrap().str().unwrap().get(0),
+        Some("소액채권")
+    );
 }
 
 #[tokio::test]
@@ -289,7 +321,7 @@ async fn test_small_bond_daily_with_latest() {
     }"#;
 
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/bon/smb_bydd_trd"))
         .and(header("AUTH_KEY", "test_key"))
@@ -310,11 +342,17 @@ async fn test_small_bond_daily_with_latest() {
 #[tokio::test]
 async fn test_small_bond_daily_empty_response() {
     let response_body = r#"{"OutBlock_1": []}"#;
-    let (client, _server) = setup_bond_test("/bon/smb_bydd_trd", "20240105", response_body, 200).await;
-    
-    let result = client.bond().small_bond_daily().date("20240105").fetch().await;
+    let (client, _server) =
+        setup_bond_test("/bon/smb_bydd_trd", "20240105", response_body, 200).await;
+
+    let result = client
+        .bond()
+        .small_bond_daily()
+        .date("20240105")
+        .fetch()
+        .await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (0, 0));
 }
@@ -333,8 +371,13 @@ async fn test_small_bond_daily_network_error() {
         .base_url("http://localhost:12345") // Non-existent server
         .build()
         .unwrap();
-    
-    let result = client.bond().small_bond_daily().date("20240105").fetch().await;
+
+    let result = client
+        .bond()
+        .small_bond_daily()
+        .date("20240105")
+        .fetch()
+        .await;
     assert!(matches!(result, Err(Error::Network(_))));
 }
 
@@ -342,15 +385,20 @@ async fn test_small_bond_daily_network_error() {
 #[tokio::test]
 async fn test_invalid_date_format() {
     let client = Client::new("test_key");
-    
+
     // Test with invalid date format
     let result = client.bond().kts_daily().date("2024-01-05").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
-    
+
     let result = client.bond().bond_daily().date("240105").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
-    
-    let result = client.bond().small_bond_daily().date("invalid").fetch().await;
+
+    let result = client
+        .bond()
+        .small_bond_daily()
+        .date("invalid")
+        .fetch()
+        .await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 }
 
@@ -400,11 +448,12 @@ async fn test_kts_daily_multiple_records() {
         ]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().kts_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (2, 17));
 }
@@ -413,7 +462,7 @@ async fn test_kts_daily_multiple_records() {
 #[tokio::test]
 async fn test_bond_rate_limit() {
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/bon/kts_bydd_trd"))
         .and(query_param("basDd", "20240105"))
@@ -429,7 +478,7 @@ async fn test_bond_rate_limit() {
         .unwrap();
 
     let result = client.bond().kts_daily().date("20240105").fetch().await;
-    
+
     match result {
         Err(Error::RateLimit { retry_after }) => {
             assert_eq!(retry_after, 60);
@@ -463,8 +512,9 @@ async fn test_kts_daily_parse_error() {
         }]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/kts_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().kts_daily().date("20240105").fetch().await;
     assert!(result.is_err());
 }
@@ -473,15 +523,17 @@ async fn test_kts_daily_parse_error() {
 #[tokio::test]
 async fn test_bond_network_timeout() {
     let mock_server = MockServer::start().await;
-    
+
     // Create a mock that delays response to trigger timeout
     Mock::given(method("GET"))
         .and(path("/bon/kts_bydd_trd"))
         .and(query_param("basDd", "20240105"))
         .and(header("AUTH_KEY", "test_key"))
-        .respond_with(ResponseTemplate::new(200)
-            .set_body_string(r#"{"OutBlock_1": []}"#)
-            .set_delay(std::time::Duration::from_secs(5)))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_string(r#"{"OutBlock_1": []}"#)
+                .set_delay(std::time::Duration::from_secs(5)),
+        )
         .mount(&mock_server)
         .await;
 
@@ -519,14 +571,15 @@ async fn test_bond_daily_with_null_values() {
         }]
     }"#;
 
-    let (client, _server) = setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_bond_test("/bon/bnd_bydd_trd", "20240105", response_body, 200).await;
+
     let result = client.bond().bond_daily().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 15));
-    
+
     // Check that null values are properly handled
     assert!(df.column("종가").unwrap().f64().unwrap().get(0).is_none());
     assert!(df.column("거래량").unwrap().i64().unwrap().get(0).is_none());

@@ -151,7 +151,10 @@ mod tests {
         };
         let result = deserialize_krx_date(deserializer);
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), NaiveDate::from_ymd_opt(2024, 1, 5).unwrap());
+        assert_eq!(
+            result.unwrap(),
+            NaiveDate::from_ymd_opt(2024, 1, 5).unwrap()
+        );
     }
 
     #[test]
@@ -170,7 +173,10 @@ mod tests {
         };
         let result = deserialize_optional_krx_date(deserializer);
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), Some(NaiveDate::from_ymd_opt(2024, 1, 5).unwrap()));
+        assert_eq!(
+            result.unwrap(),
+            Some(NaiveDate::from_ymd_opt(2024, 1, 5).unwrap())
+        );
     }
 
     #[test]
@@ -364,10 +370,10 @@ mod tests {
     #[test]
     fn test_deserialize_krx_date_strict_validation() {
         let invalid_formats = vec![
-            "2024-01-05",  // Wrong format
-            "05/01/2024",  // Wrong format
-            "20240230",    // Invalid date
-            "20241301",    // Invalid month
+            "2024-01-05", // Wrong format
+            "05/01/2024", // Wrong format
+            "20240230",   // Invalid date
+            "20241301",   // Invalid month
         ];
 
         for invalid_date in invalid_formats {
@@ -375,14 +381,18 @@ mod tests {
                 value: Value::String(invalid_date.to_string()),
             };
             let result = deserialize_krx_date(deserializer);
-            assert!(result.is_err(), "Should reject invalid date format: {}", invalid_date);
+            assert!(
+                result.is_err(),
+                "Should reject invalid date format: {}",
+                invalid_date
+            );
         }
     }
 
     #[test]
     fn test_deserialize_sample_data_patterns() {
         // Test patterns found in actual KRX API sample data
-        
+
         // Price field with dash (from options data where no trading occurred)
         let deserializer = TestDeserializer {
             value: Value::String("-".to_string()),
@@ -421,6 +431,9 @@ mod tests {
         };
         let result = deserialize_krx_date(deserializer);
         assert!(result.is_ok());
-        assert_eq!(result.unwrap(), NaiveDate::from_ymd_opt(2024, 1, 5).unwrap());
+        assert_eq!(
+            result.unwrap(),
+            NaiveDate::from_ymd_opt(2024, 1, 5).unwrap()
+        );
     }
 }

@@ -5,9 +5,14 @@ use wiremock::{
 };
 
 /// Helper function to create a mock server with predefined response
-async fn setup_esg_test(endpoint: &str, date: &str, response_body: &str, status: u16) -> (Client, MockServer) {
+async fn setup_esg_test(
+    endpoint: &str,
+    date: &str,
+    response_body: &str,
+    status: u16,
+) -> (Client, MockServer) {
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path(endpoint))
         .and(query_param("basDd", date))
@@ -45,15 +50,22 @@ async fn test_sri_bond_info_with_date() {
         }]
     }"#;
 
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 12));
-    assert_eq!(df.column("표준코드").unwrap().str().unwrap().get(0), Some("KR103502GD29"));
-    assert_eq!(df.column("종목명").unwrap().str().unwrap().get(0), Some("국고04250-2912(22-7)"));
+    assert_eq!(
+        df.column("표준코드").unwrap().str().unwrap().get(0),
+        Some("KR103502GD29")
+    );
+    assert_eq!(
+        df.column("종목명").unwrap().str().unwrap().get(0),
+        Some("국고04250-2912(22-7)")
+    );
 }
 
 #[tokio::test]
@@ -76,7 +88,7 @@ async fn test_sri_bond_info_with_latest() {
     }"#;
 
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/esg/sri_bond_info"))
         .and(header("AUTH_KEY", "test_key"))
@@ -94,21 +106,28 @@ async fn test_sri_bond_info_with_latest() {
     assert!(result.is_ok());
 }
 
-
 // Error Handling Tests
 #[tokio::test]
 async fn test_esg_api_error() {
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", "Not Found", 404).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", "Not Found", 404).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
-    assert!(matches!(result, Err(Error::ApiError { status_code: 404, .. })));
+    assert!(matches!(
+        result,
+        Err(Error::ApiError {
+            status_code: 404,
+            ..
+        })
+    ));
 }
 
 #[tokio::test]
 async fn test_esg_parsing_error() {
     let response_body = "Invalid JSON";
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(matches!(result, Err(Error::Parsing { .. })));
 }
@@ -123,11 +142,12 @@ async fn test_esg_missing_date() {
 #[tokio::test]
 async fn test_esg_empty_response() {
     let response_body = r#"{"OutBlock_1": []}"#;
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (0, 0));
 }
@@ -151,17 +171,32 @@ async fn test_esg_with_null_values() {
         }]
     }"#;
 
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (1, 12));
-    
+
     // Check that null values are properly handled
-    assert!(df.column("표면이자율").unwrap().f64().unwrap().get(0).is_none());
-    assert!(df.column("발행금액").unwrap().i64().unwrap().get(0).is_none());
+    assert!(
+        df.column("표면이자율")
+            .unwrap()
+            .f64()
+            .unwrap()
+            .get(0)
+            .is_none()
+    );
+    assert!(
+        df.column("발행금액")
+            .unwrap()
+            .i64()
+            .unwrap()
+            .get(0)
+            .is_none()
+    );
 }
 
 #[tokio::test]
@@ -171,7 +206,7 @@ async fn test_esg_network_error() {
         .base_url("http://localhost:12345")
         .build()
         .unwrap();
-    
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(matches!(result, Err(Error::Network(_))));
 }
@@ -179,14 +214,19 @@ async fn test_esg_network_error() {
 #[tokio::test]
 async fn test_esg_invalid_date_format() {
     let client = Client::new("test_key");
-    
-    let result = client.esg().sri_bond_info().date("2024-01-05").fetch().await;
+
+    let result = client
+        .esg()
+        .sri_bond_info()
+        .date("2024-01-05")
+        .fetch()
+        .await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
-    
+
     // Only test sri_bond_info as k_esg_index_daily doesn't exist yet
     let result = client.esg().sri_bond_info().date("240105").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
-    
+
     let result = client.esg().sri_bond_info().date("invalid").fetch().await;
     assert!(matches!(result, Err(Error::InvalidInput(_))));
 }
@@ -194,7 +234,7 @@ async fn test_esg_invalid_date_format() {
 #[tokio::test]
 async fn test_esg_rate_limit() {
     let mock_server = MockServer::start().await;
-    
+
     Mock::given(method("GET"))
         .and(path("/esg/sri_bond_info"))
         .and(query_param("basDd", "20240105"))
@@ -210,7 +250,7 @@ async fn test_esg_rate_limit() {
         .unwrap();
 
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
-    
+
     match result {
         Err(Error::RateLimit { retry_after }) => {
             assert_eq!(retry_after, 60);
@@ -255,19 +295,31 @@ async fn test_sri_bond_multiple_records() {
         ]
     }"#;
 
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (2, 12));
-    assert_eq!(df.column("표준코드").unwrap().str().unwrap().get(0), Some("KR103502GD29"));
-    assert_eq!(df.column("표준코드").unwrap().str().unwrap().get(1), Some("KR103503GE28"));
-    assert_eq!(df.column("채권종류").unwrap().str().unwrap().get(0), Some("사회적 채권"));
-    assert_eq!(df.column("채권종류").unwrap().str().unwrap().get(1), Some("환경 채권"));
+    assert_eq!(
+        df.column("표준코드").unwrap().str().unwrap().get(0),
+        Some("KR103502GD29")
+    );
+    assert_eq!(
+        df.column("표준코드").unwrap().str().unwrap().get(1),
+        Some("KR103503GE28")
+    );
+    assert_eq!(
+        df.column("채권종류").unwrap().str().unwrap().get(0),
+        Some("사회적 채권")
+    );
+    assert_eq!(
+        df.column("채권종류").unwrap().str().unwrap().get(1),
+        Some("환경 채권")
+    );
 }
-
 
 // Test fluctuation type handling for ESG bonds
 #[tokio::test]
@@ -319,16 +371,26 @@ async fn test_esg_bond_fluctuation_types() {
         ]
     }"#;
 
-    let (client, _server) = setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
-    
+    let (client, _server) =
+        setup_esg_test("/esg/sri_bond_info", "20240105", response_body, 200).await;
+
     let result = client.esg().sri_bond_info().date("20240105").fetch().await;
     assert!(result.is_ok());
-    
+
     let df = result.unwrap();
     assert_eq!(df.shape(), (3, 12));
-    
+
     // Check different ESG bond types are handled correctly
-    assert_eq!(df.column("채권종류").unwrap().str().unwrap().get(0), Some("사회적 채권"));
-    assert_eq!(df.column("채권종류").unwrap().str().unwrap().get(1), Some("환경 채권"));
-    assert_eq!(df.column("채권종류").unwrap().str().unwrap().get(2), Some("지배구조 채권"));
+    assert_eq!(
+        df.column("채권종류").unwrap().str().unwrap().get(0),
+        Some("사회적 채권")
+    );
+    assert_eq!(
+        df.column("채권종류").unwrap().str().unwrap().get(1),
+        Some("환경 채권")
+    );
+    assert_eq!(
+        df.column("채권종류").unwrap().str().unwrap().get(2),
+        Some("지배구조 채권")
+    );
 }

@@ -412,14 +412,35 @@ mod tests {
 
         assert_eq!(df.shape(), (1, 15));
         assert!(df.column("종가").unwrap().f64().unwrap().get(0).is_none());
-        assert!(df.column("종가수익률").unwrap().f64().unwrap().get(0).is_none());
+        assert!(
+            df.column("종가수익률")
+                .unwrap()
+                .f64()
+                .unwrap()
+                .get(0)
+                .is_none()
+        );
         assert_eq!(
             df.column("시가").unwrap().f64().unwrap().get(0),
             Some(10045.0)
         );
-        assert!(df.column("시가수익률").unwrap().f64().unwrap().get(0).is_none());
+        assert!(
+            df.column("시가수익률")
+                .unwrap()
+                .f64()
+                .unwrap()
+                .get(0)
+                .is_none()
+        );
         assert!(df.column("거래량").unwrap().i64().unwrap().get(0).is_none());
-        assert!(df.column("거래대금").unwrap().i64().unwrap().get(0).is_none());
+        assert!(
+            df.column("거래대금")
+                .unwrap()
+                .i64()
+                .unwrap()
+                .get(0)
+                .is_none()
+        );
     }
 
     #[test]
@@ -511,7 +532,7 @@ mod tests {
             trading_volume: Some(500),
             trading_value: Some(5025000),
         };
-        
+
         let record2 = BondDailyRecord {
             base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
             issue_code: "KR203802GD60".to_string(),
@@ -529,8 +550,10 @@ mod tests {
             trading_volume: Some(1000),
             trading_value: Some(10100000),
         };
-        
-        let response = ApiResponse { data: vec![record1, record2] };
+
+        let response = ApiResponse {
+            data: vec![record1, record2],
+        };
         let df = parse_bond_daily(response).unwrap();
 
         assert_eq!(df.shape(), (2, 15));
@@ -586,7 +609,9 @@ mod tests {
             trading_value: Some(20200000),
         };
 
-        let response = ApiResponse { data: vec![record1, record2] };
+        let response = ApiResponse {
+            data: vec![record1, record2],
+        };
         let df = parse_kts_daily(response).unwrap();
 
         assert_eq!(df.shape(), (2, 17));
