@@ -390,7 +390,7 @@ pub fn parse_derivative_index_daily(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use polars::prelude::*;
+    
 
     #[test]
     fn test_parse_krx_daily() {

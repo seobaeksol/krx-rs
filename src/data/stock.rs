@@ -535,7 +535,7 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
 #[cfg(test)]
 mod tests {
     use super::*;
-    use polars::prelude::*;
+    
 
     #[test]
     fn test_parse_kospi_daily() {
