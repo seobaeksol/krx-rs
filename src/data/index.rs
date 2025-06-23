@@ -386,3 +386,61 @@ pub fn parse_derivative_index_daily(
 
     Ok(df)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use polars::prelude::*;
+
+    #[test]
+    fn test_parse_krx_daily() {
+        let record = KrxIndexDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            index_class: "IDX001".to_string(),
+            index_name: "KRX 300".to_string(),
+            close_price: Some(2500.0),
+            price_change: Some(10.0),
+            fluctuation_rate: Some(0.4),
+            open_price: Some(2490.0),
+            high_price: Some(2510.0),
+            low_price: Some(2480.0),
+            trading_volume: Some(1000000),
+            trading_value: Some(2500000000),
+            market_cap: Some(1000000000000),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_krx_index_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 12));
+        assert_eq!(
+            df.column("종가").unwrap().f64().unwrap().get(0),
+            Some(2500.0)
+        );
+    }
+
+    #[test]
+    fn test_parse_kospi_daily() {
+        let record = KospiIndexDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            index_class: "IDX002".to_string(),
+            index_name: "코스피 200".to_string(),
+            close_price: Some(350.0),
+            price_change: Some(1.5),
+            fluctuation_rate: Some(0.43),
+            open_price: Some(348.5),
+            high_price: Some(351.0),
+            low_price: Some(348.0),
+            trading_volume: Some(2000000),
+            trading_value: Some(7000000000),
+            market_cap: Some(2000000000000),
+        };
+        let response = ApiResponse { data: vec![record] };
+        let df = parse_kospi_index_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 12));
+        assert_eq!(
+            df.column("종가").unwrap().f64().unwrap().get(0),
+            Some(350.0)
+        );
+    }
+}

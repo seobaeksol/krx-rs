@@ -511,7 +511,7 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
         sector_types.push(record.sector_type);
         stock_types.push(record.stock_type);
         par_values.push(record.par_value);
-        listed_shares.push(record.listed_shares.map(|v| v as i64));
+        listed_shares.push(record.listed_shares);
     }
 
     let df = df! {
@@ -530,4 +530,76 @@ pub fn parse_stock_base_info(response: ApiResponse<StockBaseInfoRecord>) -> Resu
     }?;
 
     Ok(df)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use polars::prelude::*;
+
+    #[test]
+    fn test_parse_kospi_daily() {
+        let record = KospiDailyRecord {
+            base_date: NaiveDate::from_ymd_opt(2024, 1, 5).unwrap(),
+            issue_code: "005930".to_string(),
+            issue_name: "삼성전자".to_string(),
+            market_name: "KOSPI".to_string(),
+            sector_type: "우량기업부".to_string(),
+            close_price: Some(79500.0),
+            price_change: Some(100.0),
+            fluctuation_rate: Some(0.13),
+            open_price: Some(79000.0),
+            high_price: Some(80000.0),
+            low_price: Some(78000.0),
+            trading_volume: Some(1000000),
+            trading_value: Some(79500000000),
+            market_cap: Some(474500000000000),
+            listed_shares: Some(5969782550),
+        };
+        let response = ApiResponse { data: vec![record] };
+
+        let df = parse_kospi_daily(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 15));
+        assert_eq!(
+            df.column("종가").unwrap().f64().unwrap().get(0).unwrap(),
+            79500.0
+        );
+    }
+
+    #[test]
+    fn test_parse_stock_base_info() {
+        let record = StockBaseInfoRecord {
+            issue_code: "005930".to_string(),
+            issue_short_code: "KR7005930003".to_string(),
+            issue_name: "삼성전자".to_string(),
+            issue_abbreviation: "삼성전자".to_string(),
+            issue_english_name: "SamsungElec".to_string(),
+            listing_date: "19750611".to_string(),
+            market_type: "KOSPI".to_string(),
+            security_group: "주권".to_string(),
+            sector_type: "우량기업부".to_string(),
+            stock_type: "보통주".to_string(),
+            par_value: Some(100.0),
+            listed_shares: Some(5969782550),
+        };
+        let response = ApiResponse { data: vec![record] };
+
+        let df = parse_stock_base_info(response).unwrap();
+
+        assert_eq!(df.shape(), (1, 12));
+        assert_eq!(
+            df.column("액면가").unwrap().f64().unwrap().get(0).unwrap(),
+            100.0
+        );
+        assert_eq!(
+            df.column("상장주식수")
+                .unwrap()
+                .u64()
+                .unwrap()
+                .get(0)
+                .unwrap(),
+            5969782550
+        );
+    }
 }
