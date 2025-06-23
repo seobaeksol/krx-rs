@@ -3,6 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/krx-rs.svg)](https://crates.io/crates/krx-rs)
 [![Documentation](https://docs.rs/krx-rs/badge.svg)](https://docs.rs/krx-rs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/gh/seobaeksol/krx-rs/graph/badge.svg)](https://codecov.io/gh/seobaeksol/krx-rs)
 
 KRX(한국거래소) Open API를 위한 현대적이고 타입 안전한 Rust 클라이언트 라이브러리입니다.
 
