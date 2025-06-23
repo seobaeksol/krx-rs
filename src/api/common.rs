@@ -57,3 +57,56 @@ macro_rules! impl_date_builder_methods {
         }
     };
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_valid_date_format() {
+        assert!(is_valid_date_format("20240105"));
+        assert!(is_valid_date_format("19991231"));
+        assert!(!is_valid_date_format("2024-01-05"));
+        assert!(!is_valid_date_format("240105"));
+        assert!(!is_valid_date_format("2024010a"));
+        assert!(!is_valid_date_format(""));
+    }
+
+    #[test]
+    fn test_validate_base_date_none() {
+        let result = validate_base_date(None);
+        assert!(result.is_err());
+        match result {
+            Err(Error::InvalidInput(msg)) => {
+                assert_eq!(msg, "date is required, call `date()` or `latest()`");
+            }
+            _ => panic!("Expected InvalidInput error"),
+        }
+    }
+
+    #[test]
+    fn test_validate_base_date_invalid_format() {
+        let result = validate_base_date(Some("2024-01-05".to_string()));
+        assert!(result.is_err());
+        match result {
+            Err(Error::InvalidInput(msg)) => {
+                assert_eq!(msg, "date must be in YYYYMMDD format");
+            }
+            _ => panic!("Expected InvalidInput error"),
+        }
+    }
+
+    #[test]
+    fn test_validate_base_date_valid() {
+        let result = validate_base_date(Some("20240105".to_string()));
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), "20240105");
+    }
+
+    #[test]
+    fn test_latest_workday_string() {
+        let date = latest_workday_string();
+        assert_eq!(date.len(), 8);
+        assert!(date.chars().all(|c| c.is_numeric()));
+    }
+}

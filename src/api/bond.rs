@@ -199,3 +199,100 @@ impl<'a> SmallBondDailyBuilder<'a> {
         parse_small_bond_daily(response)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::api::common::latest_workday_string;
+
+    #[test]
+    fn test_kts_daily_builder_creation() {
+        let client = Client::new("test_key");
+        let builder = client.bond().kts_daily();
+        assert!(builder.base_date.is_none());
+    }
+
+    #[test]
+    fn test_kts_daily_builder_with_date() {
+        let client = Client::new("test_key");
+        let builder = client.bond().kts_daily().date("20240105");
+        assert_eq!(builder.base_date, Some("20240105".to_string()));
+    }
+
+    #[test]
+    fn test_kts_daily_builder_with_latest() {
+        let client = Client::new("test_key");
+        let builder = client.bond().kts_daily().latest();
+        assert!(builder.base_date.is_some());
+        assert_eq!(builder.base_date, Some(latest_workday_string()));
+    }
+
+    #[test]
+    fn test_bond_daily_builder_creation() {
+        let client = Client::new("test_key");
+        let builder = client.bond().bond_daily();
+        assert!(builder.base_date.is_none());
+    }
+
+    #[test]
+    fn test_bond_daily_builder_with_date() {
+        let client = Client::new("test_key");
+        let builder = client.bond().bond_daily().date("20240105");
+        assert_eq!(builder.base_date, Some("20240105".to_string()));
+    }
+
+    #[test]
+    fn test_bond_daily_builder_with_latest() {
+        let client = Client::new("test_key");
+        let builder = client.bond().bond_daily().latest();
+        assert!(builder.base_date.is_some());
+        assert_eq!(builder.base_date, Some(latest_workday_string()));
+    }
+
+    #[test]
+    fn test_small_bond_daily_builder_creation() {
+        let client = Client::new("test_key");
+        let builder = client.bond().small_bond_daily();
+        assert!(builder.base_date.is_none());
+    }
+
+    #[test]
+    fn test_small_bond_daily_builder_with_date() {
+        let client = Client::new("test_key");
+        let builder = client.bond().small_bond_daily().date("20240105");
+        assert_eq!(builder.base_date, Some("20240105".to_string()));
+    }
+
+    #[test]
+    fn test_small_bond_daily_builder_with_latest() {
+        let client = Client::new("test_key");
+        let builder = client.bond().small_bond_daily().latest();
+        assert!(builder.base_date.is_some());
+        assert_eq!(builder.base_date, Some(latest_workday_string()));
+    }
+
+    #[test]
+    fn test_bond_api_creation() {
+        let client = Client::new("test_key");
+        let _bond_api = client.bond();
+        // This test ensures BondApi can be created successfully
+    }
+
+    #[test]
+    fn test_builder_date_overwrite() {
+        let client = Client::new("test_key");
+        let builder = client.bond().kts_daily()
+            .date("20240105")
+            .date("20240106");
+        assert_eq!(builder.base_date, Some("20240106".to_string()));
+    }
+
+    #[test]
+    fn test_builder_latest_overwrite() {
+        let client = Client::new("test_key");
+        let builder = client.bond().kts_daily()
+            .date("20240105")
+            .latest();
+        assert_eq!(builder.base_date, Some(latest_workday_string()));
+    }
+}
